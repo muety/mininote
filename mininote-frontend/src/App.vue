@@ -4,7 +4,8 @@
       <span>✎ Mini_Note</span>
     </div>
     <div class="container-fluid">
-      <div class="alert alert-danger" role="alert" v-show="alertText">{{ alertText }}</div>
+      <b-alert show v-if="alert && alert.variant === 'danger'" variant="danger">{{ alert.text }}</b-alert>
+      <b-alert show v-if="alert && alert.variant === 'success'" variant="success">{{ alert.text }}</b-alert>
       <control-bar @alert="showAlert" :hasChanges="hasChanges" @notesLoaded="onNotesLoaded"></control-bar>
       <div class="row" v-if="notes.length">
         <div class="col-2">
@@ -20,7 +21,10 @@
         </div>
       </div>
     </div>
-    <div class="footer">Made w/ ♡ by <a href="http://ferdinand-muetsch.de">Ferdinand Mütsch</a> | <a href="http://github.com/n1try/mininote">GitHub</a></div>
+    <div class="footer">Made w/ ♡ by
+      <a href="http://ferdinand-muetsch.de">Ferdinand Mütsch</a> |
+      <a href="http://github.com/n1try/mininote">GitHub</a>
+    </div>
   </div>
 </template>
 
@@ -36,7 +40,7 @@ export default {
       data: [],
       dataInitial: [],
       selectedNote: null,
-      alertText: ''
+      alert: null
     }
   },
   computed: {
@@ -49,7 +53,6 @@ export default {
       for (let i = 0; i < this.data.length; i++) {
         if (this.data[i].title !== this.dataInitial[i].title || this.data[i].content !== this.dataInitial[i].content) changed = true
       }
-      console.log(changed)
       return changed
     }
   },
@@ -70,11 +73,12 @@ export default {
     addNote: function(note) {
       this.data.push(note)
     },
-    showAlert: function(text) {
+    showAlert: function(text, variant) {
       let vm = this;
-      vm.alertText = text;
+      if (!variant) variant = 'danger'
+      vm.alert = { text, variant }
       setTimeout(function() {
-        vm.alertText = '';
+        vm.alert = null
       }, 3000)
     }
   }
