@@ -5,7 +5,7 @@
       <div class="col-4">
         <div class="input-group">
           <div class="input-group-btn">
-            <button type="button" class="btn btn-danger" @click="reset" :disabled="hasChanged">🞨</button>
+            <button type="button" class="btn btn-danger" @click="reset" :disabled="hasChanges">🞨</button>
           </div>
           <input type="text" class="form-control" placeholder="Open or create notebook ..." v-model="notebookInput" v-if="!state.opening && !state.creating" :disabled="state.loaded">
           <input type="text" class="form-control" placeholder="Choose a password ..." v-model="passwordInput" v-if="state.creating" autofocus>
@@ -19,8 +19,8 @@
       </div>
       <div class="col-2"></div>
       <div class="col-2 action-buttons-container">
-        <button class="btn btn-primary float-right" @click="updateNotebook" v-if="hasChanged">Save 💾</button>
-        <button class="btn btn-primary float-right" @click="discardChanges" v-if="hasChanged">Discard 🗑 </button>
+        <button class="btn btn-primary float-right" @click="updateNotebook" v-if="hasChanges">Save 💾</button>
+        <button class="btn btn-primary float-right" @click="discardChanges" v-if="hasChanges">Discard 🗑 </button>
       </div>
     </div>
   </div>
@@ -32,7 +32,8 @@ import { md5 } from './../services/md5'
 const apiBaseUrl = 'https://api.myjson.com/bins/'
 
 export default {
-  name: 'notebook-picker',
+  name: 'control-bar',
+  props: ['hasChanges'],
   data() {
     return {
       notebookInput: '',
@@ -49,14 +50,6 @@ export default {
   computed: {
     notebookLoaded: function() {
       return false
-    },
-    hasChanged: function() {
-      if (this.notebook.length !== this.notebookInitial.length) return true
-      let changed = false
-      for (let i = 0; i < this.notebook.length; i++) {
-        if (this.notebook[i].title !== this.notebookInitial[i].title || this.notebook[i].content !== this.notebookInitial[i].content) changed = true
-      }
-      return changed
     }
   },
   methods: {

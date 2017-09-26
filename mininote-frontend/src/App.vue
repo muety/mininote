@@ -5,7 +5,7 @@
     </div>
     <div class="container-fluid">
       <div class="alert alert-danger" role="alert" v-show="alertText">{{ alertText }}</div>
-      <notebook-picker @alert="showAlert" @notesLoaded="onNotesLoaded"></notebook-picker>
+      <control-bar @alert="showAlert" :hasChanges="hasChanges" @notesLoaded="onNotesLoaded"></control-bar>
       <div class="row" v-if="notes.length">
         <div class="col-2">
           <notes-picker :notes="notes" @noteSelected="onNoteSelected" @alert="showAlert" @addNote="addNote"></notes-picker>
@@ -27,13 +27,14 @@
 <script>
 import NotesEditor from './components/NotesEditor'
 import NotesPicker from './components/NotesPicker'
-import NotebookPicker from './components/NotebookPicker'
+import ControlBar from './components/ControlBar'
 
 export default {
   name: 'app',
   data() {
     return {
       data: [],
+      dataInitial: [],
       selectedNote: null,
       alertText: ''
     }
@@ -41,12 +42,21 @@ export default {
   computed: {
     notes: function() {
       return this.data
+    },
+    hasChanges: function() {
+      if (this.data.length !== this.dataInitial.length) return true
+      let changed = false
+      for (let i = 0; i < this.data.length; i++) {
+        if (this.data[i].title !== this.dataInitial[i].title || this.data[i].content !== this.dataInitial[i].content) changed = true
+      }
+      console.log(changed)
+      return changed
     }
   },
   components: {
     NotesEditor,
     NotesPicker,
-    NotebookPicker
+    ControlBar
   },
   methods: {
     onNoteSelected: function(noteId) {
@@ -54,6 +64,7 @@ export default {
     },
     onNotesLoaded: function(notes) {
       this.data = notes
+      this.dataInitial = JSON.parse(JSON.stringify(notes))
       this.selectedNote = this.data[0]
     },
     addNote: function(note) {
