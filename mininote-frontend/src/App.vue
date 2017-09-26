@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <div class="logo">
+      <span>✎ Mini_Note</span>
+    </div>
     <div class="container-fluid">
       <div class="alert alert-danger" role="alert" v-show="alertText">{{ alertText }}</div>
       <notebook-picker @alert="showAlert" @notesLoaded="onNotesLoaded"></notebook-picker>
@@ -12,10 +15,12 @@
         </div>
       </div>
       <div v-if="!notes.length">
-        <div class="placeholder"><span>Please open an existing notebook or create a new one.</span></div>
+        <div class="placeholder">
+          <span>Please open an existing notebook or create a new one.</span>
+        </div>
       </div>
     </div>
-  </div>
+    <div class="footer">Made w/ ♡ by <a href="http://ferdinand-muetsch.de">Ferdinand Mütsch</a> | <a href="http://github.com/n1try/mininote">GitHub</a></div>
   </div>
 </template>
 
@@ -67,12 +72,31 @@ export default {
 
 <style>
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
   position: absolute;
   width: 100%;
+}
+
+#app a {
+  color: #42B983;
+  text-decoration: none;
+}
+
+#app .logo {
+  color: #bbb;
+  font-size: 24px;
+  position: absolute;
+  left: 20px;
+}
+
+#app .footer {
+  color: #bbb;
+  position: fixed;
+  bottom: 10px;
+  left: 20px;
+  font-size: 14px;
 }
 
 #app input {

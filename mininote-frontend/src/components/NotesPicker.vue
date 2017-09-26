@@ -67,7 +67,7 @@ export default {
 
 .picker-container ul {
   overflow-y: auto;
-  max-height: calc(100vh - 120px)
+  max-height: calc(100vh - 240px)
 }
 
 .picker-container li.active {
