@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import HashService from './../services/HashService'
+import { md5 } from './../services/md5'
 
 const apiBaseUrl = 'https://api.myjson.com/bins/'
 
@@ -94,7 +94,7 @@ export default {
     openNotebook: function() {
       let vm = this
       let headers = new Headers()
-      headers.append('Authorization', 'Basic ' + HashService.md5(this.passwordInput))
+      headers.append('Authorization', 'Basic ' + md5(this.passwordInput))
       let req = new Request(apiBaseUrl + this.notebookInput, { method: 'GET', headers: headers })
       fetch(req)
         .then(res => {
@@ -121,7 +121,7 @@ export default {
       let vm = this
       let body = {
         title: this.notebookInput,
-        password: HashService.md5(this.passwordInput),
+        password: md5(this.passwordInput),
         content: ''
       }
       let req = new Request(apiBaseUrl, { method: 'POST', body: JSON.stringify(body) })

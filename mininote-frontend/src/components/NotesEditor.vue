@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { marked } from './../services/marked'
+
 let timeout = null;
 
 export default {
