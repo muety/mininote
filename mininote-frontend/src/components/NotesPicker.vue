@@ -54,6 +54,8 @@ export default {
       }
       this.$emit('addNote', note)
       this.newNoteInput = ''
+      this.selectedNoteId = note.id
+      this.$emit('noteSelected', note.id)
     }
   }
 }

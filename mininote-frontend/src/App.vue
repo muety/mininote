@@ -7,7 +7,7 @@
       <b-alert show v-if="alert && alert.variant === 'danger'" variant="danger">{{ alert.text }}</b-alert>
       <b-alert show v-if="alert && alert.variant === 'success'" variant="success">{{ alert.text }}</b-alert>
       <control-bar @alert="showAlert" :hasChanges="hasChanges" @notesLoaded="onNotesLoaded"></control-bar>
-      <div class="row" v-if="notes.length">
+      <div class="row" v-if="notes">
         <div class="col-2">
           <notes-picker :notes="notes" @noteSelected="onNoteSelected" @alert="showAlert" @addNote="addNote"></notes-picker>
         </div>
@@ -15,7 +15,7 @@
           <notes-editor :note="selectedNote" @alert="showAlert"></notes-editor>
         </div>
       </div>
-      <div v-if="!notes.length">
+      <div v-if="!notes">
         <div class="placeholder">
           <span>Please open an existing notebook or create a new one.</span>
         </div>
@@ -37,8 +37,8 @@ export default {
   name: 'app',
   data() {
     return {
-      data: [],
-      dataInitial: [],
+      data: null,
+      dataInitial: null,
       selectedNote: null,
       alert: null
     }
@@ -48,6 +48,7 @@ export default {
       return this.data
     },
     hasChanges: function() {
+      if (!this.data) return false
       if (this.data.length !== this.dataInitial.length) return true
       let changed = false
       for (let i = 0; i < this.data.length; i++) {
@@ -67,8 +68,8 @@ export default {
     },
     onNotesLoaded: function(notes) {
       this.data = notes
-      this.dataInitial = JSON.parse(JSON.stringify(notes))
-      this.selectedNote = this.data[0]
+      this.dataInitial = notes ? JSON.parse(JSON.stringify(notes)) : null
+      this.selectedNote = notes ? this.data[0] : null
     },
     addNote: function(note) {
       this.data.push(note)

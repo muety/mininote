@@ -30,9 +30,8 @@
 </template>
 
 <script>
+import NotesApiService from './../services/NotesApiService'
 import { md5 } from './../services/md5'
-
-const apiBaseUrl = 'https://api.myjson.com/bins/'
 
 export default {
   name: 'control-bar',
@@ -68,23 +67,18 @@ export default {
         creating: false,
         loaded: false
       }
-      this.$emit('notesLoaded', [])
+      this.$emit('notesLoaded', null)
     },
     discardChanges: function() {
       this.notebook = JSON.parse(JSON.stringify(this.notebookInitial))
       this.$emit('notesLoaded', this.notebook)
     },
-    updateNotebook: function() {
-      console.log(this.notebook.map(n => n.content))
-    },
     checkNotebookState: function() {
       let vm = this
-      let req = new Request(apiBaseUrl + this.notebookInput.toLowerCase(), { method: 'HEAD' })
-      fetch(req)
-        .then(res => {
-          if (res.status === 200) vm.state.opening = true
-          else if (res.status === 404) vm.state.creating = true
-          else vm.$emit('alert', 'An error has occured. Sorry.')
+      NotesApiService.exists(this.notebookInput)
+        .then(exists => {
+          if (exists) vm.state.opening = true
+          else vm.state.creating = true
         })
         .catch(() => {
           vm.reset()
@@ -93,24 +87,22 @@ export default {
     },
     openNotebook: function() {
       let vm = this
-      let headers = new Headers()
-      headers.append('Authorization', 'Basic ' + md5(this.passwordInput))
-      let req = new Request(apiBaseUrl + this.notebookInput.toLowerCase(), { method: 'GET', headers: headers })
-      fetch(req)
+      NotesApiService.getNotes(this.notebookInput.toLowerCase(), md5(this.passwordInput))
         .then(res => {
-          if (res.status === 200) return res.json()
-          else if (res.status === 401) return this.$emit('alert', 'You are not authorized to view this note.')
+          if (res && typeof (res) === 'object') {
+            vm.state.opening = false
+            vm.state.loaded = true
+            vm.notebook = res
+            vm.notebookInitial = JSON.parse(JSON.stringify(res))
+            vm.$emit('notesLoaded', res)
+          }
+          else if (res && typeof (res) === 'string' && res === 'unauthorized') {
+            vm.$emit('alert', 'You are not authorized to access this note. Password wrong?')
+          }
           else {
             vm.reset()
             vm.$emit('alert', 'An error has occured. Sorry.')
           }
-        })
-        .then(res => {
-          vm.state.opening = false
-          vm.state.loaded = true
-          vm.notebook = res
-          vm.notebookInitial = JSON.parse(JSON.stringify(res))
-          vm.$emit('notesLoaded', res)
         })
         .catch(() => {
           vm.reset()
@@ -119,29 +111,39 @@ export default {
     },
     createNotebook: function() {
       let vm = this
-      let body = {
-        title: this.notebookInput.toLowerCase(),
-        password: md5(this.passwordInput),
-        content: ''
-      }
-      let req = new Request(apiBaseUrl, { method: 'POST', body: JSON.stringify(body) })
-      fetch(req)
+      NotesApiService.create(this.notebookInput.toLowerCase(), md5(this.passwordInput))
         .then(res => {
-          if (res.status === 201) return res.json()
+          if (res) {
+            vm.state.creating = false
+            vm.state.loaded = true
+            vm.notebook = res.notes
+            vm.notebookInitial = res.notes.slice(0)
+            vm.$emit('notesLoaded', res.notes)
+          }
           else {
             vm.reset()
             vm.$emit('alert', 'An error has occured. Sorry.')
           }
         })
-        .then(res => {
-          vm.state.creating = false
-          vm.state.loaded = true
-          vm.notebook = res
-          vm.notebookInitial = res.slice(0)
-          vm.$emit('notesLoaded', res)
-        })
         .catch(() => {
           vm.reset()
+          vm.$emit('alert', 'An error has occured. Sorry.')
+        })
+    },
+    updateNotebook: function() {
+      let vm = this
+      NotesApiService.updateNotes(this.notebookInput.toLowerCase(), md5(this.passwordInput), this.notebook)
+        .then(res => {
+          if (res && typeof (res) === 'object') {
+            vm.$emit('alert', 'Notenbook saved successfully.', 'success')
+            vm.$emit('notesLoaded', res)
+          }
+          else if (res && typeof (res) === 'string' && res === 'unauthorized') {
+            vm.$emit('alert', 'You are not authorized to access this note. Password wrong?')
+          }
+          else vm.$emit('alert', 'An error has occured. Sorry.')
+        })
+        .catch(() => {
           vm.$emit('alert', 'An error has occured. Sorry.')
         })
     }
