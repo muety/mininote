@@ -79,7 +79,7 @@ export default {
     },
     checkNotebookState: function() {
       let vm = this
-      let req = new Request(apiBaseUrl + this.notebookInput, { method: 'HEAD' })
+      let req = new Request(apiBaseUrl + this.notebookInput.toLowerCase(), { method: 'HEAD' })
       fetch(req)
         .then(res => {
           if (res.status === 200) vm.state.opening = true
@@ -95,7 +95,7 @@ export default {
       let vm = this
       let headers = new Headers()
       headers.append('Authorization', 'Basic ' + md5(this.passwordInput))
-      let req = new Request(apiBaseUrl + this.notebookInput, { method: 'GET', headers: headers })
+      let req = new Request(apiBaseUrl + this.notebookInput.toLowerCase(), { method: 'GET', headers: headers })
       fetch(req)
         .then(res => {
           if (res.status === 200) return res.json()
@@ -120,7 +120,7 @@ export default {
     createNotebook: function() {
       let vm = this
       let body = {
-        title: this.notebookInput,
+        title: this.notebookInput.toLowerCase(),
         password: md5(this.passwordInput),
         content: ''
       }
