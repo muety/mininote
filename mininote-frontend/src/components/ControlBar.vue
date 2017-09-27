@@ -10,12 +10,12 @@
               <button type="button" class="btn btn-danger" @click="reset" :disabled="hasChanges">🞨</button>
             </div>
             <input type="text" class="form-control" placeholder="Open or create notebook ..." v-model="notebookInput" v-if="!state.opening && !state.creating" :disabled="state.loaded">
-            <input type="text" class="form-control" placeholder="Choose a password ..." v-model="passwordInput" v-if="state.creating" autofocus>
+            <input type="text" class="form-control" placeholder="Choose a password for the new notebook..." v-model="passwordInput" v-if="state.creating" autofocus>
             <input type="text" class="form-control" placeholder="Enter password ..." v-model="passwordInput" v-if="state.opening" autofocus>
             <div class="input-group-btn">
-              <button type="button" class="btn btn-primary" :disabled="!notebookInput || state.loaded" @click="checkNotebookState" v-if="!state.opening && !state.creating">Open</button>
-              <button type="button" class="btn btn-primary" :disabled="!passwordInput" @click="openNotebook" v-if="state.opening">Open</button>
-              <button type="button" class="btn btn-primary" :disabled="!passwordInput" @click="createNotebook" v-if="state.creating">Create</button>
+              <button type="button" class="btn btn-primary" :disabled="!notebookInput || state.loaded" @click="checkNotebookState" @keyup.enter="checkNotebookState" v-if="!state.opening && !state.creating">Open</button>
+              <button type="button" class="btn btn-primary" :disabled="!passwordInput" @click="openNotebook" @keyup.enter="openNotebook" v-if="state.opening">Open</button>
+              <button type="button" class="btn btn-primary" :disabled="!passwordInput" @click="createNotebook" @keyup.enter="createNotebook" v-if="state.creating">Create</button>
             </div>
           </div>
         </div>

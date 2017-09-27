@@ -31,7 +31,7 @@ export default {
       clearTimeout(timeout)
       timeout = setTimeout(function() {
         vm.note.content = e.target.value
-      }, 1000)
+      }, 500)
     }
   }
 }

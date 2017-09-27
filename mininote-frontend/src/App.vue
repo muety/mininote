@@ -2,6 +2,7 @@
   <div id="app">
     <div class="logo">
       <span>✎ Mini_Note</span>
+      <span class="small">BETA</span>
     </div>
     <div class="container-fluid">
       <b-alert show v-if="alert && alert.variant === 'danger'" variant="danger">{{ alert.text }}</b-alert>
@@ -105,6 +106,11 @@ export default {
   font-size: 24px;
   position: absolute;
   left: 20px;
+}
+
+#app .logo .small {
+  color: #42B983;
+  font-size: 12px;
 }
 
 #app .footer {
