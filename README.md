@@ -20,5 +20,12 @@ A simple, self-hosted Markdown note-taking app built with [VueJS](https://vuejs.
 5. In _mininote-frontend_ directory: `npm run build`
 6. In root directory: `npm start`
 
+## Todo
+This project is still under development. The following features are about to be implemented. Feel free to contribute.
+* Tests
+* Improved data validation
+* More REST
+* Ability to rename notebooks and notes
+
 ## License
 MIT @ [Ferdinand Mütsch](https://ferdinand-muetsch.de)
