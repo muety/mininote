@@ -1,4 +1,4 @@
-const apiBaseUrl = 'http://localhost:3000/api/'
+const apiBaseUrl = '/api/'
 
 export default {
     exists: function(notebookId) {
