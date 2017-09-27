@@ -38,25 +38,22 @@ export default {
   name: 'app',
   data() {
     return {
-      data: null,
-      dataInitial: null,
+      notes: null,
+      notesInitial: null,
       selectedNoteId: 0,
       alert: null
     }
   },
   computed: {
-    notes: function() {
-      return this.data
-    },
     selectedNote: function() {
-      return this.selectedNoteId > 0 ? this.data.filter(n => n.id === this.selectedNoteId)[0] : null
+      return this.selectedNoteId > 0 ? this.notes.filter(n => n.id === this.selectedNoteId)[0] : null
     },
     hasChanges: function() {
-      if (!this.data) return false
-      if (this.data.length !== this.dataInitial.length) return true
+      if (!this.notes) return false
+      if (this.notes.length !== this.notesInitial.length) return true
       let changed = false
-      for (let i = 0; i < this.data.length; i++) {
-        if (this.data[i].title !== this.dataInitial[i].title || this.data[i].content !== this.dataInitial[i].content) changed = true
+      for (let i = 0; i < this.notes.length; i++) {
+        if (this.notes[i].title !== this.notesInitial[i].title || this.notes[i].content !== this.notesInitial[i].content) changed = true
       }
       return changed
     }
@@ -71,19 +68,19 @@ export default {
       this.selectedNoteId = noteId
     },
     onNotesLoaded: function(notes) {
-      let isInitialLoad = !this.dataInitial
-      this.data = notes
-      this.dataInitial = notes ? JSON.parse(JSON.stringify(notes)) : null
-      if (isInitialLoad) this.selectedNoteId = notes ? this.data.reduce((acc, n) => Math.min(acc, n.id), Number.MAX_VALUE) : 0
+      let isInitialLoad = !this.notesInitial
+      this.notes = notes
+      this.notesInitial = notes ? JSON.parse(JSON.stringify(notes)) : null
+      if (isInitialLoad) this.selectedNoteId = notes ? this.notes.reduce((acc, n) => Math.min(acc, n.id), Number.MAX_VALUE) : 0
     },
     addNote: function(note) {
-      this.data.push(note)
+      this.notes.push(note)
     },
     deleteNote: function(note) {
-      this.data.splice(this.data.indexOf(note), 1)
+      this.notes.splice(this.notes.indexOf(note), 1)
     },
     discardChanges: function() {
-      this.data = JSON.parse(JSON.stringify(this.dataInitial))
+      this.notes = JSON.parse(JSON.stringify(this.notesInitial))
     },
     showAlert: function(text, variant) {
       let vm = this;

@@ -22,7 +22,7 @@
         <div class="col-2"></div>
         <div class="col-2 action-buttons-container">
           <button class="btn btn-primary float-right" @click="updateNotebook" v-if="hasChanges">Save 💾</button>
-          <button class="btn btn-primary float-right" @click="tryReset" v-if="hasChanges">Discard 🗑 </button>
+          <button class="btn btn-primary float-right" @click="tryReset" v-if="hasChanges">Discard ↺ </button>
         </div>
       </div>
     </div>
