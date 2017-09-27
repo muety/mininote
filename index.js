@@ -3,6 +3,7 @@
 const config = require('./config'),
     express = require('express'),
     app = express(),
+    cors = require('cors'),
     bodyParser = require('body-parser'),
     lfsa = require('./node_modules/lokijs/src/loki-fs-structured-adapter.js'),
     loki = require('lokijs'),
@@ -13,12 +14,14 @@ const config = require('./config'),
         autosave: true,
         autosaveInterval: 4000
     }),
-    port = process.env.PORT || config.PORT
+    port = process.env.PORT || config.PORT,
+    debug = process.env.NODE_ENV === 'dev' || config.DEBUG
 
 let notebooks;
 
 app.use(express.static('public'))
 app.use(bodyParser.json())
+if (debug) app.use(cors())
 
 app.head('/api/notebook/:id', (req, res) => {
     if (!notebooks.findOne({ id: req.params.id })) return res.status(404).end()

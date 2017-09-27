@@ -9,13 +9,13 @@
             <div class="input-group-btn">
               <button type="button" class="btn btn-danger" @click="reset" :disabled="hasChanges">🞨</button>
             </div>
-            <input type="text" class="form-control" placeholder="Open or create notebook ..." v-model="notebookInput" v-if="!state.opening && !state.creating" :disabled="state.loaded">
-            <input type="text" class="form-control" placeholder="Choose a password for the new notebook..." v-model="passwordInput" v-if="state.creating" autofocus>
-            <input type="text" class="form-control" placeholder="Enter password ..." v-model="passwordInput" v-if="state.opening" autofocus>
+            <input type="text" class="form-control" placeholder="Open or create notebook ..." ref="refNotebookInput" v-model="notebookInput" v-if="!state.opening && !state.creating" :disabled="state.loaded" @keyup.enter="checkNotebookState" autofocus>
+            <input type="text" class="form-control" placeholder="Choose a password for the new notebook..." ref="refCreatePasswordInput" v-model="passwordInput" v-if="state.creating" @keyup.enter="createNotebook">
+            <input type="text" class="form-control" placeholder="Enter password ..." ref="refOpenPasswordInput" v-model="passwordInput" v-if="state.opening" @keyup.enter="openNotebook">
             <div class="input-group-btn">
-              <button type="button" class="btn btn-primary" :disabled="!notebookInput || state.loaded" @click="checkNotebookState" @keyup.enter="checkNotebookState" v-if="!state.opening && !state.creating">Open</button>
-              <button type="button" class="btn btn-primary" :disabled="!passwordInput" @click="openNotebook" @keyup.enter="openNotebook" v-if="state.opening">Open</button>
-              <button type="button" class="btn btn-primary" :disabled="!passwordInput" @click="createNotebook" @keyup.enter="createNotebook" v-if="state.creating">Create</button>
+              <button type="button" class="btn btn-primary" :disabled="!notebookInput || state.loaded" @click="checkNotebookState" v-if="!state.opening && !state.creating">Open</button>
+              <button type="button" class="btn btn-primary" :disabled="!passwordInput" @click="openNotebook" v-if="state.opening">Open</button>
+              <button type="button" class="btn btn-primary" :disabled="!passwordInput" @click="createNotebook" v-if="state.creating">Create</button>
             </div>
           </div>
         </div>
@@ -68,6 +68,7 @@ export default {
         loaded: false
       }
       this.$emit('notesLoaded', null)
+      setTimeout(() => this.$refs.refNotebookInput.focus(), 0)
     },
     discardChanges: function() {
       this.notebook = JSON.parse(JSON.stringify(this.notebookInitial))
@@ -77,8 +78,14 @@ export default {
       let vm = this
       NotesApiService.exists(this.notebookInput)
         .then(exists => {
-          if (exists) vm.state.opening = true
-          else vm.state.creating = true
+          if (exists) {
+            vm.state.opening = true
+            setTimeout(() => vm.$refs.refOpenPasswordInput.focus(), 0)
+          }
+          else {
+            vm.state.creating = true
+            setTimeout(() => vm.$refs.refCreatePasswordInput.focus(), 0)
+          }
         })
         .catch(() => {
           vm.reset()
