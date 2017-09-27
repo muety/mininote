@@ -16,7 +16,7 @@
     <div class="input-group new-note-input">
       <input type="text" class="form-control" placeholder="Add note ..." v-model="newNoteInput" @keyup.enter="addNote">
       <div class="input-group-btn">
-        <button type="button" class="btn btn-primary" :disabled="!newNoteInput" @click="addNote">➕</button>
+        <button type="button" class="btn btn-primary" :disabled="!newNoteInput" @click="addNote">&#x2b;</button>
       </div>
     </div>
   </div>

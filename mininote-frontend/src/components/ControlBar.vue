@@ -7,7 +7,7 @@
         <div class="col-4">
           <div class="input-group">
             <div class="input-group-btn">
-              <button type="button" class="btn btn-danger" @click="reset" :disabled="hasChanges">🞨</button>
+              <button type="button" class="btn btn-danger" @click="reset" :disabled="hasChanges">&#x2573;</button>
             </div>
             <input type="text" class="form-control" placeholder="Open or create notebook ..." ref="refNotebookInput" v-model="notebookInput" v-if="!state.opening && !state.creating" :disabled="state.loaded" @keyup.enter="checkNotebookState" autofocus>
             <input type="text" class="form-control" placeholder="Choose a password for the new notebook..." ref="refCreatePasswordInput" v-model="passwordInput" v-if="state.creating" @keyup.enter="createNotebook">
@@ -21,8 +21,8 @@
         </div>
         <div class="col-2"></div>
         <div class="col-2 action-buttons-container">
-          <button class="btn btn-primary float-right" @click="updateNotebook" v-if="hasChanges">Save 💾</button>
-          <button class="btn btn-primary float-right" @click="tryReset" v-if="hasChanges">Discard ↺ </button>
+          <button class="btn btn-primary float-right" @click="updateNotebook" v-if="hasChanges">&#x1f4be;</button>
+          <button class="btn btn-primary float-right" @click="tryReset" v-if="hasChanges">&#x21ba;</button>
         </div>
       </div>
     </div>
@@ -75,7 +75,7 @@ export default {
     checkNotebookState: function() {
       let vm = this
       if (!this.notebookInput) return
-      NotesApiService.exists(this.notebookInput)
+      NotesApiService.exists(this.notebookInput.toLowerCase())
         .then(exists => {
           if (exists) {
             vm.state.opening = true

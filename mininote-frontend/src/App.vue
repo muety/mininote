@@ -22,7 +22,7 @@
         </div>
       </div>
     </div>
-    <div class="footer">Made w/ ♡ by
+    <div class="footer">Made w/ &#x2661; by
       <a href="http://ferdinand-muetsch.de">Ferdinand Mütsch</a> |
       <a href="http://github.com/n1try/mininote">GitHub</a>
     </div>
@@ -125,7 +125,7 @@ export default {
   position: fixed;
   bottom: 10px;
   left: 20px;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 #app input {
