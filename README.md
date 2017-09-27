@@ -1,13 +1,13 @@
 # MiniNote
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/ferdinandmuetsch/5)
+[![Say thanks](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg)](https://saythanks.io/to/n1try)
+
 A simple, self-hosted Markdown note-taking app built with [VueJS](https://vuejs.org), and [Express](http://expressjs.com).
 
 **[Demo](https://mininote.ferdinand-muetsch.de)**
 
 ![](https://i.imgur.com/Y9TFu6w.png)
-
-[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/ferdinandmuetsch/5)
-[![Say thanks](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg)](https://saythanks.io/to/n1try)
 
 ## Requirements
 * NodeJS >= 6.x
