@@ -7,7 +7,7 @@
     <div class="container-fluid">
       <b-alert show v-if="alert && alert.variant === 'danger'" variant="danger">{{ alert.text }}</b-alert>
       <b-alert show v-if="alert && alert.variant === 'success'" variant="success">{{ alert.text }}</b-alert>
-      <control-bar @alert="showAlert" :hasChanges="hasChanges" @notesLoaded="onNotesLoaded" @discardChanges="discardChanges"></control-bar>
+      <control-bar @alert="showAlert" :hasChanges="hasChanges" :notes="notes" @notesLoaded="onNotesLoaded" @discardChanges="discardChanges"></control-bar>
       <div class="row" v-if="notes">
         <div class="col-2">
           <notes-picker :notes="notes" @noteSelected="onNoteSelected" @alert="showAlert" @addNote="addNote" @deleteNote="deleteNote"></notes-picker>

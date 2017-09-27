@@ -35,7 +35,7 @@ import { md5 } from './../services/md5'
 
 export default {
   name: 'control-bar',
-  props: ['hasChanges'],
+  props: ['hasChanges', 'notes'],
   data() {
     return {
       notebookInput: '',
@@ -44,8 +44,7 @@ export default {
         opening: false,
         creating: false,
         loaded: false
-      },
-      notebook: []
+      }
     }
   },
   computed: {
@@ -70,7 +69,7 @@ export default {
       setTimeout(() => this.$refs.refNotebookInput.focus(), 0)
     },
     discardChanges: function() {
-      this.$emit('discardChanges', this.notebook)
+      this.$emit('discardChanges', this.notes)
     },
     checkNotebookState: function() {
       let vm = this
@@ -99,8 +98,6 @@ export default {
           if (res && typeof (res) === 'object') {
             vm.state.opening = false
             vm.state.loaded = true
-            vm.notebook = res
-            vm.notebookInitial = JSON.parse(JSON.stringify(res))
             vm.$emit('notesLoaded', res)
           }
           else if (res && typeof (res) === 'string' && res === 'unauthorized') {
@@ -124,8 +121,6 @@ export default {
           if (res) {
             vm.state.creating = false
             vm.state.loaded = true
-            vm.notebook = res.notes
-            vm.notebookInitial = res.notes.slice(0)
             vm.$emit('notesLoaded', res.notes)
           }
           else {
@@ -140,7 +135,7 @@ export default {
     },
     updateNotebook: function() {
       let vm = this
-      NotesApiService.updateNotes(this.notebookInput.toLowerCase(), md5(this.passwordInput), this.notebook)
+      NotesApiService.updateNotes(this.notebookInput.toLowerCase(), md5(this.passwordInput), this.notes)
         .then(res => {
           if (res && typeof (res) === 'object') {
             vm.$emit('alert', 'Notenbook saved successfully.', 'success')
