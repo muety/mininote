@@ -5,8 +5,6 @@
 
 A simple, self-hosted Markdown note-taking app built with [VueJS](https://vuejs.org), and [Express](http://expressjs.com).
 
-**[Demo](https://mininote.ferdinand-muetsch.de)**
-
 ![](https://i.imgur.com/Y9TFu6w.png)
 
 ## Requirements

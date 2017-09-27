@@ -4,7 +4,7 @@
       <div class="col editor-container">
         <textarea :value="note.content" @input="onInput"></textarea>
       </div>
-      <div class="col editor-container">
+      <div class="col editor-container result-container">
         <div v-html="textCompiled"></div>
       </div>
     </div>
@@ -52,5 +52,9 @@ textarea {
   padding: 20px;
   border-radius: 0.25rem;
   background-color: #fff;
+}
+
+.result-container {
+  overflow: auto;
 }
 </style>
