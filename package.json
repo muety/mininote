@@ -1,27 +1,26 @@
 {
-  "name": "mininote",
-  "version": "0.0.1",
-  "description": "A simple Mardown note-taking editor",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/n1try/mininote.git"
-  },
-  "author": "Ferdinand Mütsch <mail@ferdinand-muetsch.de>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/n1try/mininote/issues"
-  },
-  "homepage": "https://github.com/n1try/mininote#readme",
-  "dependencies": {
-    "body-parser": "^1.18.2",
-    "bootstrap-vue": "^1.0.0-beta.9",
-    "cors": "^2.8.4",
-    "express": "^4.15.5",
-    "lokijs": "^1.5.0"
-  }
+    "name": "mininote",
+    "version": "0.0.1",
+    "description": "A simple Mardown note-taking editor",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/n1try/mininote.git"
+    },
+    "author": "Ferdinand Mütsch <mail@ferdinand-muetsch.de>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/n1try/mininote/issues"
+    },
+    "homepage": "https://github.com/n1try/mininote#readme",
+    "dependencies": {
+        "body-parser": "^1.18.2",
+        "cors": "^2.8.4",
+        "express": "^4.15.5",
+        "lokijs": "^1.5.0"
+    }
 }
