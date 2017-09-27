@@ -7,12 +7,12 @@
     <div class="container-fluid">
       <b-alert show v-if="alert && alert.variant === 'danger'" variant="danger">{{ alert.text }}</b-alert>
       <b-alert show v-if="alert && alert.variant === 'success'" variant="success">{{ alert.text }}</b-alert>
-      <control-bar @alert="showAlert" :hasChanges="hasChanges" @notesLoaded="onNotesLoaded"></control-bar>
+      <control-bar @alert="showAlert" :hasChanges="hasChanges" @notesLoaded="onNotesLoaded" @discardChanges="discardChanges"></control-bar>
       <div class="row" v-if="notes">
         <div class="col-2">
-          <notes-picker :notes="notes" @noteSelected="onNoteSelected" @alert="showAlert" @addNote="addNote"></notes-picker>
+          <notes-picker :notes="notes" @noteSelected="onNoteSelected" @alert="showAlert" @addNote="addNote" @deleteNote="deleteNote"></notes-picker>
         </div>
-        <div class="col-10" v-if="selectedNote !== null">
+        <div class="col-10" v-if="selectedNote">
           <notes-editor :note="selectedNote" @alert="showAlert"></notes-editor>
         </div>
       </div>
@@ -40,13 +40,16 @@ export default {
     return {
       data: null,
       dataInitial: null,
-      selectedNote: null,
+      selectedNoteId: 0,
       alert: null
     }
   },
   computed: {
     notes: function() {
       return this.data
+    },
+    selectedNote: function() {
+      return this.selectedNoteId > 0 ? this.data.filter(n => n.id === this.selectedNoteId)[0] : null
     },
     hasChanges: function() {
       if (!this.data) return false
@@ -65,15 +68,22 @@ export default {
   },
   methods: {
     onNoteSelected: function(noteId) {
-      this.selectedNote = this.notes.filter(n => n.id === noteId)[0]
+      this.selectedNoteId = noteId
     },
     onNotesLoaded: function(notes) {
+      let isInitialLoad = !this.dataInitial
       this.data = notes
       this.dataInitial = notes ? JSON.parse(JSON.stringify(notes)) : null
-      this.selectedNote = notes ? this.data[0] : null
+      if (isInitialLoad) this.selectedNoteId = notes ? this.data.reduce((acc, n) => Math.min(acc, n.id), Number.MAX_VALUE) : 0
     },
     addNote: function(note) {
       this.data.push(note)
+    },
+    deleteNote: function(note) {
+      this.data.splice(this.data.indexOf(note), 1)
+    },
+    discardChanges: function() {
+      this.data = JSON.parse(JSON.stringify(this.dataInitial))
     },
     showAlert: function(text, variant) {
       let vm = this;

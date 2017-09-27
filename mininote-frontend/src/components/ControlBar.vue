@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-modal id="discardModal" ref="discardModalRef" title="Save changes?" @ok="reset">You're about to discard all recent changes to your notebook. Are you sure you want to proceed?</b-modal>
+    <b-modal id="discardModal" ref="discardModalRef" title="Save changes?" @ok="discardChanges">You're about to discard all recent changes to your notebook. Are you sure you want to proceed?</b-modal>
     <div class="container-fluid">
       <div class="row">
         <div class="col-4"></div>
@@ -45,7 +45,6 @@ export default {
         creating: false,
         loaded: false
       },
-      notebookInitial: [],
       notebook: []
     }
   },
@@ -71,11 +70,11 @@ export default {
       setTimeout(() => this.$refs.refNotebookInput.focus(), 0)
     },
     discardChanges: function() {
-      this.notebook = JSON.parse(JSON.stringify(this.notebookInitial))
-      this.$emit('notesLoaded', this.notebook)
+      this.$emit('discardChanges', this.notebook)
     },
     checkNotebookState: function() {
       let vm = this
+      if (!this.notebookInput) return
       NotesApiService.exists(this.notebookInput)
         .then(exists => {
           if (exists) {
@@ -94,6 +93,7 @@ export default {
     },
     openNotebook: function() {
       let vm = this
+      if (!this.notebookInput || !this.passwordInput) return
       NotesApiService.getNotes(this.notebookInput.toLowerCase(), md5(this.passwordInput))
         .then(res => {
           if (res && typeof (res) === 'object') {
@@ -118,6 +118,7 @@ export default {
     },
     createNotebook: function() {
       let vm = this
+      if (!this.notebookInput || !this.passwordInput) return
       NotesApiService.create(this.notebookInput.toLowerCase(), md5(this.passwordInput))
         .then(res => {
           if (res) {

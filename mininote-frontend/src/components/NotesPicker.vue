@@ -8,10 +8,13 @@
     </div>
 
     <ul class="list-group">
-      <li v-for="n in filteredNotes" class="list-group-item" :class="{ active: selectedNoteId == n.id }" @click="selectNote(n.id)">{{ n.title }}</li>
+      <li v-for="n in filteredNotes" class="list-group-item" :class="{ active: selectedNoteId == n.id }" @click="selectNote(n.id)">
+        {{ n.title }}
+        <span class="delete-btn" @click.stop="deleteNote(n)">🗑</span>
+      </li>
     </ul>
     <div class="input-group new-note-input">
-      <input type="text" class="form-control" placeholder="Add note ..." v-model="newNoteInput">
+      <input type="text" class="form-control" placeholder="Add note ..." v-model="newNoteInput" @keyup.enter="addNote">
       <div class="input-group-btn">
         <button type="button" class="btn btn-primary" :disabled="!newNoteInput" @click="addNote">➕</button>
       </div>
@@ -25,7 +28,7 @@ export default {
   props: ['notes'],
   data() {
     return {
-      selectedNoteId: 1,
+      selectedNoteId: this.notes.reduce((acc, n) => Math.min(acc, n.id), Number.MAX_VALUE),
       query: '',
       newNoteInput: ''
     }
@@ -45,17 +48,21 @@ export default {
       this.$emit('noteSelected', noteId)
     },
     addNote: function() {
+      if (!this.newNoteInput) return
       let note = {
-        id: this.notes.reduce((acc, n) => {
-          return Math.max(acc, n.id)
-        }, 0) + 1,
+        id: this.notes.reduce((acc, n) => Math.max(acc, n.id), 0) + 1,
         title: this.newNoteInput,
         content: ''
       }
       this.$emit('addNote', note)
       this.newNoteInput = ''
       this.selectedNoteId = note.id
-      this.$emit('noteSelected', note.id)
+      this.$emit('noteSelected', this.selectedNoteId)
+    },
+    deleteNote: function(note) {
+      this.$emit('deleteNote', note)
+      this.selectedNoteId = this.notes.reduce((acc, n) => n.id !== note.id ? Math.max(acc, n.id) : acc, 0)
+      this.$emit('noteSelected', this.selectedNoteId)
     }
   }
 }
@@ -75,6 +82,10 @@ export default {
 .picker-container li.active {
   background-color: #42B983;
   border-color: #42B983;
+}
+
+.picker-container li .delete-btn {
+  float: right;
 }
 
 .picker-container .search-container {
