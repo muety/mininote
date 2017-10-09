@@ -55,7 +55,7 @@ app.put('/api/notebook/:id/notes', (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log(`Listening on port ${port}.`)
+    console.log(`Listening on localhost:${port}.`)
 })
 
 function initDb() {

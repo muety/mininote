@@ -138,11 +138,11 @@ export default {
       NotesApiService.updateNotes(this.notebookInput.toLowerCase(), md5(this.passwordInput), this.notes)
         .then(res => {
           if (res && typeof (res) === 'object') {
-            vm.$emit('alert', 'Notenbook saved successfully.', 'success')
+            vm.$emit('alert', 'Notebook saved successfully.', 'success')
             vm.$emit('notesLoaded', res)
           }
           else if (res && typeof (res) === 'string' && res === 'unauthorized') {
-            vm.$emit('alert', 'You are not authorized to access this note. Password wrong?')
+            vm.$emit('alert', 'You are not authorized to access this note. Wrong password?')
           }
           else vm.$emit('alert', 'An error has occured. Sorry.')
         })
