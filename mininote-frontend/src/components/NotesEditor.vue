@@ -44,6 +44,7 @@ textarea {
   width: 100%;
   height: 100%;
   resize: none;
+  outline: none;
 }
 
 .editor-container {
