@@ -8,7 +8,7 @@
     </div>
 
     <ul class="list-group">
-      <li v-for="n in filteredNotes" class="list-group-item" :class="{ active: selectedNoteId == n.id }" @click="selectNote(n.id)">
+      <li v-for="n in filteredNotes" :key="n.id" class="list-group-item" :class="{ active: selectedNoteId == n.id }" @click="selectNote(n.id)">
         {{ n.title }}
         <span class="delete-btn" @click.stop="deleteNote(n)">🗑</span>
       </li>
