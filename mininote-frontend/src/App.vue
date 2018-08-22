@@ -128,10 +128,6 @@ export default {
   font-size: 12px;
 }
 
-#app input {
-  border: 0;
-}
-
 button {
   cursor: pointer;
 }

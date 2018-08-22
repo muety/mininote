@@ -1,11 +1,20 @@
 <template>
   <div>
     <b-modal id="discardModal" ref="discardModalRef" title="Save changes?" @ok="discardChanges">You're about to discard all recent changes to your notebook. Are you sure you want to proceed?</b-modal>
+    <b-modal id="settingsModal" ref="settingsModalRef" size="lg" title="Settings" @ok="updateSettings" ok-title="Save">
+      <b-container fluid>
+        <b-row>
+          <b-col sm="3"><label for="newPasswordInput">Password:</label></b-col>
+          <!-- TODO: Change to password input type as soon as https://github.com/bootstrap-vue/bootstrap-vue/issues/1908 is resolved -->
+          <b-col><b-form-input id="newPasswordInput" type="text" placeholder="Enter new password for this notebook." v-model="settings.password"/></b-col>
+        </b-row>
+      </b-container>
+    </b-modal>
     <div class="container-fluid">
       <div class="row">
         <div class="col-4"></div>
         <div class="col-4">
-          <div class="input-group">
+          <div class="input-group" id="notebook-chooser">
             <div class="input-group-btn">
               <button type="button" class="btn btn-danger" @click="reset" :disabled="hasChanges">&#x2573;</button>
             </div>
@@ -23,6 +32,7 @@
         <div class="col-2 action-buttons-container">
           <button class="btn btn-primary float-right" @click="updateNotebook" v-if="hasChanges">&#x1f4be;</button>
           <button class="btn btn-primary float-right" @click="tryReset" v-if="hasChanges">&#x21ba;</button>
+          <button class="btn btn-primary float-right" v-if="state.loaded" v-b-modal.settingsModal>&#x2699;</button>
         </div>
       </div>
     </div>
@@ -30,128 +40,155 @@
 </template>
 
 <script>
-import NotesApiService from './../services/NotesApiService'
-import { md5 } from './../services/md5'
+import NotesApiService from "./../services/NotesApiService";
+import { md5 } from "./../services/md5";
 
 export default {
-  name: 'control-bar',
-  props: ['hasChanges', 'notes'],
+  name: "control-bar",
+  props: ["hasChanges", "notes"],
   data() {
     return {
-      notebookInput: '',
-      passwordInput: '',
+      notebookInput: "",
+      passwordInput: "",
       state: {
         opening: false,
         creating: false,
         loaded: false
+      },
+      settings: {
+        password: ""
       }
-    }
+    };
   },
   computed: {
     notebookLoaded: function() {
-      return false
+      return false;
     }
   },
   methods: {
     tryReset: function() {
-      if (!this.hasChanges) this.reset()
+      if (!this.hasChanges) this.reset();
       else this.$refs.discardModalRef.show();
     },
     reset: function() {
-      this.notebookInput = ''
-      this.passwordInput = ''
+      this.notebookInput = "";
+      this.passwordInput = "";
       this.state = {
         opening: false,
         creating: false,
         loaded: false
-      }
-      this.$emit('notesLoaded', null)
-      setTimeout(() => this.$refs.refNotebookInput.focus(), 0)
+      };
+      this.$emit("notesLoaded", null);
+      setTimeout(() => this.$refs.refNotebookInput.focus(), 0);
     },
     discardChanges: function() {
-      this.$emit('discardChanges', this.notes)
+      this.$emit("discardChanges", this.notes);
     },
     checkNotebookState: function() {
-      let vm = this
-      if (!this.notebookInput) return
+      let vm = this;
+      if (!this.notebookInput) return;
       NotesApiService.exists(this.notebookInput.toLowerCase())
         .then(exists => {
           if (exists) {
-            vm.state.opening = true
-            setTimeout(() => vm.$refs.refOpenPasswordInput.focus(), 0)
-          }
-          else {
-            vm.state.creating = true
-            setTimeout(() => vm.$refs.refCreatePasswordInput.focus(), 0)
+            vm.state.opening = true;
+            setTimeout(() => vm.$refs.refOpenPasswordInput.focus(), 0);
+          } else {
+            vm.state.creating = true;
+            setTimeout(() => vm.$refs.refCreatePasswordInput.focus(), 0);
           }
         })
         .catch(() => {
-          vm.reset()
-          vm.$emit('alert', 'An error has occured. Sorry.')
-        })
+          vm.reset();
+          vm.$emit("alert", "An error has occured. Sorry.");
+        });
     },
     openNotebook: function() {
-      let vm = this
-      if (!this.notebookInput || !this.passwordInput) return
-      NotesApiService.getNotes(this.notebookInput.toLowerCase(), md5(this.passwordInput))
+      let vm = this;
+      if (!this.notebookInput || !this.passwordInput) return;
+      NotesApiService.getNotes(
+        this.notebookInput.toLowerCase(),
+        md5(this.passwordInput)
+      )
         .then(res => {
-          if (res && typeof (res) === 'object') {
-            vm.state.opening = false
-            vm.state.loaded = true
-            vm.$emit('notesLoaded', res)
-          }
-          else if (res && typeof (res) === 'string' && res === 'unauthorized') {
-            vm.$emit('alert', 'You are not authorized to access this note. Password wrong?')
-          }
-          else {
-            vm.reset()
-            vm.$emit('alert', 'An error has occured. Sorry.')
+          if (res && typeof res === "object") {
+            vm.state.opening = false;
+            vm.state.loaded = true;
+            vm.$emit("notesLoaded", res);
+          } else if (res && typeof res === "string" && res === "unauthorized") {
+            vm.$emit(
+              "alert",
+              "You are not authorized to access this note. Password wrong?"
+            );
+          } else {
+            vm.reset();
+            vm.$emit("alert", "An error has occured. Sorry.");
           }
         })
         .catch(() => {
-          vm.reset()
-          vm.$emit('alert', 'An error has occured. Sorry.')
-        })
+          vm.reset();
+          vm.$emit("alert", "An error has occured. Sorry.");
+        });
     },
     createNotebook: function() {
-      let vm = this
-      if (!this.notebookInput || !this.passwordInput) return
-      NotesApiService.create(this.notebookInput.toLowerCase(), md5(this.passwordInput))
+      let vm = this;
+      if (!this.notebookInput || !this.passwordInput) return;
+      NotesApiService.create(
+        this.notebookInput.toLowerCase(),
+        md5(this.passwordInput)
+      )
         .then(res => {
           if (res) {
-            vm.state.creating = false
-            vm.state.loaded = true
-            vm.$emit('notesLoaded', res.notes)
-          }
-          else {
-            vm.reset()
-            vm.$emit('alert', 'An error has occured. Sorry.')
+            vm.state.creating = false;
+            vm.state.loaded = true;
+            vm.$emit("notesLoaded", res.notes);
+          } else {
+            vm.reset();
+            vm.$emit("alert", "An error has occured. Sorry.");
           }
         })
         .catch(() => {
-          vm.reset()
-          vm.$emit('alert', 'An error has occured. Sorry.')
-        })
+          vm.reset();
+          vm.$emit("alert", "An error has occured. Sorry.");
+        });
     },
     updateNotebook: function() {
-      let vm = this
-      NotesApiService.updateNotes(this.notebookInput.toLowerCase(), md5(this.passwordInput), this.notes)
-        .then(res => {
-          if (res && typeof (res) === 'object') {
-            vm.$emit('alert', 'Notebook saved successfully.', 'success')
-            vm.$emit('notesLoaded', res)
-          }
-          else if (res && typeof (res) === 'string' && res === 'unauthorized') {
-            vm.$emit('alert', 'You are not authorized to access this note. Wrong password?')
-          }
-          else vm.$emit('alert', 'An error has occured. Sorry.')
-        })
+      let vm = this;
+      NotesApiService.updateNotes(
+        this.notebookInput.toLowerCase(),
+        md5(this.passwordInput),
+        this.notes
+      )
+        .then(this.onNotebookSave)
         .catch(() => {
-          vm.$emit('alert', 'An error has occured. Sorry.')
-        })
+          vm.$emit("alert", "An error has occured. Sorry.");
+        });
+    },
+    updateSettings: function() {
+      let vm = this;
+      let settings = JSON.parse(JSON.stringify(this.settings));
+      settings.password = md5(settings.password);
+      NotesApiService.updateSettings(
+        this.notebookInput.toLowerCase(),
+        md5(this.passwordInput),
+        settings
+      )
+        .then(this.onNotebookSave)
+        .catch(() => vm.$emit("alert", "An error has occured. Sorry."));
+    },
+    onNotebookSave: function(res) {
+      let vm = this;
+      if (res && typeof res === "object") {
+        vm.$emit("alert", "Notebook saved successfully.", "success");
+        vm.$emit("notesLoaded", res);
+      } else if (res && typeof res === "string" && res === "unauthorized") {
+        vm.$emit(
+          "alert",
+          "You are not authorized to access this note. Wrong password?"
+        );
+      } else vm.$emit("alert", "An error has occured. Sorry.");
     }
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -159,4 +196,9 @@ export default {
 .action-buttons-container button {
   margin-left: 5px;
 }
+
+#notebook-chooser input {
+  border: 0;
+}
+
 </style>

@@ -54,6 +54,19 @@ app.put('/api/notebook/:id/notes', (req, res) => {
     res.send(notebook.notes)
 })
 
+app.put('/api/notebook/:id/settings', (req, res) => {
+    if (!req.body) return res.status(400).end()
+    let notebook = notebooks.findOne({ id: req.params.id })
+    if (!notebook) return res.status(404).end()
+    if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+
+    if (req.body.password) {
+        notebook.password = req.body.password;
+    }
+    notebooks.update(notebook)
+    res.send(notebook.notes)
+})
+
 app.listen(port, () => {
     console.log(`Listening on localhost:${port}.`)
 })
