@@ -19,6 +19,12 @@ A simple, self-hosted Markdown note-taking app built with [VueJS](https://vuejs.
 5. In _mininote-frontend_ directory: `npm run build`
 6. In root directory: `npm start`
 
+## How to run with Docker?
+1. `git clone https://github.com/n1try/mininote`
+2. `docker build -t mininote .`
+3. `docker run -d -p 3000:3000 -v /your-dir-of-choice:/app/data mininote`
+--> MiniNote will listen on port 3000 and persist data to `/your-dir-of-choice` on your host system using a shared volume.
+
 ## Todo
 This project is still under development. The following features are about to be implemented. Feel free to contribute.
 * Tests
