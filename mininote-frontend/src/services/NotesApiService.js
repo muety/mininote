@@ -1,6 +1,13 @@
 const apiBaseUrl = '/api/'
 
 export default {
+    list: function() {
+        let req = new Request(apiBaseUrl + 'notebook', { method: 'GET' })
+        return fetch(req)
+            .then(res => {
+                return res.json()
+            })
+    },
     exists: function(notebookId) {
         let req = new Request(apiBaseUrl + 'notebook/' + notebookId, { method: 'HEAD' })
         return fetch(req)
