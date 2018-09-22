@@ -19,8 +19,8 @@
       <div v-if="!notes" class="notebook-placeholder">
         <span v-if="notebooks.length === 0" class="placeholder">Please create a notebook.</span>
         <span v-else class="placeholder">Please open an existing notebook or create a new one.</span>
-        <div v-if="notebooks.length !== 0" class="notebook-list">
-          <notebook-list :notebooks="notebooks"></notebook-list>
+        <div class="notebook-list">
+          <notebook-list :notebooks="notebooks" @notebooksLoaded="onNotebooksLoaded"></notebook-list>
         </div>
       </div>
     </div>
@@ -36,8 +36,6 @@ import NotebookList from './components/NotebookList'
 import NotesEditor from './components/NotesEditor'
 import NotesPicker from './components/NotesPicker'
 import ControlBar from './components/ControlBar'
-
-import NotesApiService from "./services/NotesApiService";
 
 export default {
   name: 'app',
@@ -70,19 +68,9 @@ export default {
     NotesPicker,
     ControlBar
   },
-  mounted() {
-    this.loadNotebooks()
-  },
   methods: {
-    loadNotebooks: function() {
-      let vm = this;
-      NotesApiService.list()
-        .then(res => {
-          vm.notebooks = res
-        })
-        .catch(() => {
-          // No need to show a message, because the user can still use the app.
-        });
+    onNotebooksLoaded: function(notebooks) {
+      this.notebooks = notebooks
     },
     onNoteSelected: function(noteId) {
       this.selectedNoteId = noteId
@@ -182,6 +170,8 @@ button {
 #app .notebook-list {
   width: 40%;
   padding: 36px 0;
+  height: 100vh;
+  max-height: 50vh;
 }
 
 .alert {
