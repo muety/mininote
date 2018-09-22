@@ -16,9 +16,11 @@
           <notes-editor :showEditor="showEditor" :note="selectedNote" @alert="showAlert"></notes-editor>
         </div>
       </div>
-      <div v-if="!notes">
-        <div class="placeholder">
-          <span>Please open an existing notebook or create a new one.</span>
+      <div v-if="!notes" class="notebook-placeholder">
+        <span v-if="notebooks.length === 0" class="placeholder">Please create a notebook.</span>
+        <span v-else class="placeholder">Please open an existing notebook or create a new one.</span>
+        <div v-if="notebooks.length !== 0" class="notebook-list">
+          <notebook-list :notebooks="notebooks"></notebook-list>
         </div>
       </div>
     </div>
@@ -30,9 +32,12 @@
 </template>
 
 <script>
+import NotebookList from './components/NotebookList'
 import NotesEditor from './components/NotesEditor'
 import NotesPicker from './components/NotesPicker'
 import ControlBar from './components/ControlBar'
+
+import NotesApiService from "./services/NotesApiService";
 
 export default {
   name: 'app',
@@ -41,6 +46,7 @@ export default {
 			showEditor: true,
 			notes: null,
       notesInitial: null,
+      notebooks: [],
       selectedNoteId: 0,
       alert: null
     }
@@ -60,14 +66,25 @@ export default {
     }
   },
   components: {
+    NotebookList,
     NotesEditor,
     NotesPicker,
     ControlBar
   },
-  created(){
-    window.addEventListener("beforeunload", this.didIntentToLeave);
+  mounted() {
+    this.loadNotebooks()
   },
   methods: {
+    loadNotebooks: function() {
+      let vm = this;
+      NotesApiService.list()
+        .then(res => {
+          vm.notebooks = res
+        })
+        .catch(() => {
+          // No need to show a message, because the user can still use the app.
+        });
+    },
     onNoteSelected: function(noteId) {
       this.selectedNoteId = noteId
     },
@@ -93,26 +110,24 @@ export default {
       setTimeout(function() {
         vm.alert = null
       }, 3000)
-    },
-    didIntentToLeave: function(event){
-      if(this.hasChanges){
-        // Cancel the event as stated by the standard.
-        event.preventDefault();
-        // Chrome requires returnValue to be set.
-        event.returnValue = '';
-      }
     }
   }
 }
 </script>
 
 <style>
+body {
+  margin: 20px 0 0 !important;
+}
+
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  position: absolute;
+  position: relative;
   width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 #app a {
@@ -149,14 +164,25 @@ button {
   border-color: #42B983;
 }
 
+#app .notebook-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: calc(100vh - 100px);
+  padding: 36px 0;
+}
+
 #app .placeholder {
   font-size: 40px;
   text-align: center;
   color: rgb(73, 80, 87);
-  position: absolute;
-  width: 600px;
-  top: 35vh;
-  left: calc(50% - 300px);
+  width: 33%;
+}
+
+#app .notebook-list {
+  width: 40%;
+  padding: 36px 0;
 }
 
 .alert {
