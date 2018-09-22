@@ -28,6 +28,10 @@ app.head('/api/notebook/:id', (req, res) => {
     res.status(200).end()
 })
 
+app.get('/api/notebook', (req, res) => {
+    res.status(201).send(notebooks.find().map(notebookData => notebookData.id))
+})
+
 app.post('/api/notebook', (req, res) => {
     if (!req.body || !req.body.id || !req.body.password) return res.status(400).end()
     if (notebooks.findOne({ id: req.body.id })) return res.status(409).end()
