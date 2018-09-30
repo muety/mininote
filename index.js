@@ -44,6 +44,17 @@ app.get('/api/notebook/:id/notes', (req, res) => {
     res.send(notebook.notes)
 })
 
+app.get('/api/notebook/:notebook_id/notes/:note_id', (req, res)=>{
+    let notebook = notebooks.findOne({ id: req.params.notebook_id })
+    if (!notebook) return res.status(404).end()
+    let note=notebook.notes.find((note)=>note.id==req.params.note_id)
+    if(!note) return  res.status(404).end()
+    if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+    res.send(note)
+
+
+})
+
 app.put('/api/notebook/:id/notes', (req, res) => {
     if (!req.body || !Array.isArray(req.body)) return res.status(400).end()
     let notebook = notebooks.findOne({ id: req.params.id })
