@@ -7,10 +7,11 @@
     <div class="container-fluid">
       <b-alert show v-if="alert && alert.variant === 'danger'" variant="danger">{{ alert.text }}</b-alert>
       <b-alert show v-if="alert && alert.variant === 'success'" variant="success">{{ alert.text }}</b-alert>
-      <control-bar @alert="showAlert" :hasChanges="hasChanges" :notes="notes" @notesLoaded="onNotesLoaded" @discardChanges="discardChanges"></control-bar>
+      <control-bar @alert="showAlert" :hasChanges="hasChanges" :note="selectedNote" @notesLoaded="onNotesLoaded" @discardChanges="discardChanges"></control-bar>
+      <!-- receiver -->
       <div class="row" v-if="notes">
         <div class="col-2">
-          <notes-picker :notes="notes" @noteSelected="onNoteSelected" @alert="showAlert" @addNote="addNote" @deleteNote="deleteNote"></notes-picker>
+          <notes-picker :notes="notes" :hasChanges="hasChanges" @noteSelected="onNoteSelected" @alert="showAlert" @addNote="addNote" @deleteNote="deleteNote" @discardChanges="discardChanges"></notes-picker>
         </div>
         <div class="col-10" v-if="selectedNote">
           <notes-editor :note="selectedNote" @alert="showAlert"></notes-editor>
@@ -55,6 +56,7 @@ export default {
       for (let i = 0; i < this.notes.length; i++) {
         if (this.notes[i].title !== this.notesInitial[i].title || this.notes[i].content !== this.notesInitial[i].content) changed = true
       }
+      
       return changed
     }
   },

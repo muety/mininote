@@ -1,5 +1,6 @@
 <template>
   <div class="picker-container">
+     <b-modal id="discardModal" ref="discardModalRef" title="Save changes?" @ok="discardChanges">You're about to discard all recent changes to your notebook. Are you sure you want to proceed?</b-modal>
     <div class="search-container">
       <div class="input-group">
         <span class="input-group-addon" id="sizing-addon1">&#x1F50D;</span>
@@ -25,7 +26,7 @@
 <script>
 export default {
   name: 'notes-picker',
-  props: ['notes'],
+  props: ['notes', 'hasChanges'],
   data() {
     return {
       selectedNoteId: this.notes.reduce((acc, n) => Math.min(acc, n.id), Number.MAX_VALUE),
@@ -44,8 +45,15 @@ export default {
   },
   methods: {
     selectNote: function(noteId) {
-      this.selectedNoteId = noteId
-      this.$emit('noteSelected', noteId)
+      if(this.hasChanges&&noteId!=this.selectedNoteId)
+      {
+        this.$refs.discardModalRef.show();
+      }
+      else{
+        this.selectedNoteId = noteId
+        this.$emit('noteSelected', noteId)
+      }
+      
     },
     addNote: function() {
       if (!this.newNoteInput) return
@@ -58,6 +66,10 @@ export default {
       this.newNoteInput = ''
       this.selectedNoteId = note.id
       this.$emit('noteSelected', this.selectedNoteId)
+    },
+    discardChanges: function() {
+      this.$emit("discardChanges", this.selectedNoteId);
+  
     },
     deleteNote: function(note) {
       this.$emit('deleteNote', note)

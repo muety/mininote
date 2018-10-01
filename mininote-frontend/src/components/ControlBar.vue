@@ -45,7 +45,7 @@ import { md5 } from "./../services/md5";
 
 export default {
   name: "control-bar",
-  props: ["hasChanges", "notes"],
+  props: ["hasChanges", "note"],
   data() {
     return {
       notebookInput: "",
@@ -82,7 +82,7 @@ export default {
       setTimeout(() => this.$refs.refNotebookInput.focus(), 0);
     },
     discardChanges: function() {
-      this.$emit("discardChanges", this.notes);
+      this.$emit("discardChanges", this.note);
     },
     checkNotebookState: function() {
       let vm = this;
@@ -156,7 +156,7 @@ export default {
       NotesApiService.updateNotes(
         this.notebookInput.toLowerCase(),
         md5(this.passwordInput),
-        this.notes
+        this.note
       )
         .then(this.onNotebookSave)
         .catch(() => {

@@ -29,11 +29,11 @@ export default {
                 else return null
             })
     },
-    updateNotes: function(notebookId, passwordHash, notes) {
+    updateNotes: function(notebookId, passwordHash, note) {
         let headers = new Headers()
         headers.append('Authorization', 'Basic ' + passwordHash)
         headers.append('Content-Type', 'application/json')
-        let req = new Request(apiBaseUrl + 'notebook/' + notebookId + '/notes', { method: 'PUT', body: JSON.stringify(notes), headers: headers })
+        let req = new Request(apiBaseUrl + 'notebook/' + notebookId + '/notes/'+note.id, { method: 'PUT', body: JSON.stringify(note), headers: headers })
         return fetch(req)
             .then(res => {
                 if (res.status === 200) return res.json()
