@@ -19,6 +19,20 @@ A simple, self-hosted Markdown note-taking app built with [VueJS](https://vuejs.
 5. In _mininote-frontend_ directory: `npm run build`
 6. In root directory: `npm start`
 
+##### Or for short..
+
+```shell
+git clone https://github.com/n1try/mininote && cd mininote && npm install && cd _mininote-frontend_ && npm install
+```
+
+##### All you need to do now is :
+
+```
+1. Modify the config.js
+2. In _mininote-frontend_ directory: `npm run build`
+3. In root directory: `npm start`
+```
+
 ## How to run with Docker?
 1. `git clone https://github.com/n1try/mininote`
 2. `docker build -t mininote .`
