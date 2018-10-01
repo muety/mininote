@@ -8,6 +8,8 @@ ENV MININOTE_PORT 3000
 
 COPY . /app/
 
+RUN cd /app && npm install
+
 RUN cd /app/mininote-frontend && \
     npm install && \
     npm run build && \
