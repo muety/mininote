@@ -34,3 +34,5 @@ This project is still under development. The following features are about to be 
 
 ## License
 MIT @ [Ferdinand Mütsch](https://ferdinand-muetsch.de)
+
+Hacktoberfest
