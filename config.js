@@ -4,4 +4,6 @@ module.exports = {
     DB_COLLECTION_MAIN: 'notebooks',
     DEBUG: false,
     SHOW_LIST: true,
+    HTTPS_KEY: null,
+    HTTPS_CERT: null,
 }
