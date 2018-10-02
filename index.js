@@ -72,11 +72,16 @@ app.put('/api/notebook/:id/settings', (req, res) => {
 if (config.HTTPS_KEY && config.HTTPS_CERT) {
     const https = require('https'),
         fs = require('fs'),
-        key = fs.readFileSync(config.HTTPS_KEY, 'utf8'),
-        cert = fs.readFileSync(config.HTTPS_CERT, 'utf8')
+        path = require('path'),
+        key = fs.readFileSync(path.normalize(config.HTTPS_KEY), 'utf8'),
+        cert = fs.readFileSync(path.normalize(config.HTTPS_CERT), 'utf8')
 
-    server = https.createServer({ key, cert }, app)
-} else {
+    if (key && cert) {
+        server = https.createServer({ key, cert }, app)
+    }
+}
+
+if (!server) {
     const http = require('http')
     server = http.createServer(app)
 }
