@@ -71,6 +71,8 @@ app.listen(port, () => {
     console.log(`Listening on localhost:${port}.`)
 })
 
+module.exports = app;
+
 function initDb() {
     if (!db.getCollection(config.DB_COLLECTION_MAIN)) db.addCollection(config.DB_COLLECTION_MAIN)
     notebooks = db.getCollection(config.DB_COLLECTION_MAIN)

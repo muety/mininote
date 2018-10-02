@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node index.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "tape ./test/*.js"
     },
     "repository": {
         "type": "git",
@@ -22,5 +22,11 @@
         "cors": "^2.8.4",
         "express": "^4.15.5",
         "lokijs": "^1.5.0"
+    },
+    "devDependencies": {
+        "supertest": "^3.3.0",
+        "tap-diff": "^0.1.1",
+        "tape": "^4.9.1",
+        "nyc": "^13.0.1"
     }
 }
