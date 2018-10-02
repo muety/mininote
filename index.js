@@ -18,9 +18,11 @@ const config = require('./config'),
     debug = process.env.NODE_ENV === 'dev' || config.DEBUG
 
 let notebooks;
+let server;
 
 app.use(express.static('public'))
 app.use(bodyParser.json())
+
 if (debug) app.use(cors())
 
 app.head('/api/notebook/:id', (req, res) => {
@@ -67,7 +69,19 @@ app.put('/api/notebook/:id/settings', (req, res) => {
     res.send(notebook.notes)
 })
 
-app.listen(port, () => {
+if (config.HTTPS_KEY && config.HTTPS_CERT) {
+    const https = require('https'),
+        fs = require('fs'),
+        key = fs.readFileSync(config.HTTPS_KEY, 'utf8'),
+        cert = fs.readFileSync(config.HTTPS_CERT, 'utf8')
+
+    server = https.createServer({ key, cert }, app)
+} else {
+    const http = require('http')
+    server = http.createServer(app)
+}
+
+server.listen(port, () => {
     console.log(`Listening on localhost:${port}.`)
 })
 
