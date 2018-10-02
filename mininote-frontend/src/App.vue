@@ -63,6 +63,9 @@ export default {
     NotesPicker,
     ControlBar
   },
+  created(){
+    window.addEventListener("beforeunload", this.didIntentToLeave);
+  },
   methods: {
     onNoteSelected: function(noteId) {
       this.selectedNoteId = noteId
@@ -89,6 +92,14 @@ export default {
       setTimeout(function() {
         vm.alert = null
       }, 3000)
+    },
+    didIntentToLeave: function(event){
+      if(this.hasChanges){
+        // Cancel the event as stated by the standard.
+        event.preventDefault();
+        // Chrome requires returnValue to be set.
+        event.returnValue = '';
+      }
     }
   }
 }
