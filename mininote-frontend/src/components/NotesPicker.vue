@@ -2,7 +2,9 @@
   <div class="picker-container">
     <div class="search-container">
       <div class="input-group">
-        <span class="input-group-addon" id="sizing-addon1">&#x1F50D;</span>
+        <div class="input-group-prepend" id="sizing-addon1">
+          <span class="input-group-text">&#x1F50D;</span>
+        </div>
         <input type="text" class="form-control" placeholder="Search ..." v-model="query">
       </div>
     </div>
