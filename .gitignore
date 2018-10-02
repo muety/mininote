@@ -3,3 +3,4 @@ dist
 .vscode
 node_modules
 data/*.json*
+data/*.pem
