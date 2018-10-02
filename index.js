@@ -59,9 +59,12 @@ app.put('/api/notebook/:id/settings', (req, res) => {
     let notebook = notebooks.findOne({ id: req.params.id })
     if (!notebook) return res.status(404).end()
     if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
-
-    if (req.body.password) {
-        notebook.password = req.body.password;
+    if (/^[a-z0-9_]+$/.test(req.body.newNotebookName)) {
+        if (notebooks.findOne({ id: req.body.newNotebookName })) return res.status(409).end()
+        notebook.id = req.body.newNotebookName
+    }
+    if (/[a-z0-9]+/.test(req.body.password)) {
+        notebook.password = req.body.password
     }
     notebooks.update(notebook)
     res.send(notebook.notes)

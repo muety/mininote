@@ -4,6 +4,10 @@
     <b-modal id="settingsModal" ref="settingsModalRef" size="lg" title="Settings" @ok="updateSettings" ok-title="Save">
       <b-container fluid>
         <b-row>
+          <b-col sm="3"><label for="newNotebookNameInput">New Name:</label></b-col>
+          <b-col><b-form-input id="newNotebookNameInput" type="text" placeholder="Enter new name for this notebook." v-model="settings.newNotebookName"/></b-col>
+        </b-row>
+        <b-row>
           <b-col sm="3"><label for="newPasswordInput">Password:</label></b-col>
           <!-- TODO: Change to password input type as soon as https://github.com/bootstrap-vue/bootstrap-vue/issues/1908 is resolved -->
           <b-col><b-form-input id="newPasswordInput" type="text" placeholder="Enter new password for this notebook." v-model="settings.password"/></b-col>
@@ -56,6 +60,7 @@ export default {
         loaded: false
       },
       settings: {
+        newNotebookName: "",
         password: ""
       }
     };
@@ -166,17 +171,30 @@ export default {
     updateSettings: function() {
       let vm = this;
       let settings = JSON.parse(JSON.stringify(this.settings));
-      settings.password = md5(settings.password);
+      let plainTextPassword;
+      if ( /\s+/.test(settings.password) || settings.password === '') {
+        plainTextPassword = this.passwordInput;
+        settings.password = md5(this.passwordInput);
+      } else {
+        plainTextPassword = settings.password;
+        settings.password = md5(settings.password);
+      }
       NotesApiService.updateSettings(
         this.notebookInput.toLowerCase(),
         md5(this.passwordInput),
-        settings
-      )
-        .then(this.onNotebookSave)
+        settings)
+        .then( res => {
+          if ( res && typeof res === "object") {
+            this.notebookInput = settings.newNotebookName;
+            this.passwordInput = plainTextPassword;
+          }
+          this.onNotebookSave(res);
+        })
         .catch(() => vm.$emit("alert", "An error has occured. Sorry."));
     },
     onNotebookSave: function(res) {
       let vm = this;
+
       if (res && typeof res === "object") {
         vm.$emit("alert", "Notebook saved successfully.", "success");
         vm.$emit("notesLoaded", res);
