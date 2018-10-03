@@ -1,9 +1,9 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div class="col editor-container">
+      <b-collapse visible id="collapse1" class="col editor-container">
         <textarea :value="note.content" @input="onInput"></textarea>
-      </div>
+      </b-collapse>
       <div class="col editor-container result-container">
         <div v-html="textCompiled"></div>
       </div>
