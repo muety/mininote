@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="col-2"></div>
-				<div class="col-2 action-buttons-container" v-if="state.loaded">
+        <div class="col-2 action-buttons-container" v-if="state.loaded">
           <b-btn class="btn btn-rimary float-right" v-b-toggle.collapse1 variant="primary" v-if="selectedNote">&#x2194;</b-btn>
           <button class="btn btn-primary float-right" @click="updateNotebook" v-if="hasChanges">&#x1f4be;</button>
           <button class="btn btn-primary float-right" @click="tryReset" v-if="hasChanges">&#x21ba;</button>
