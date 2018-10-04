@@ -56,7 +56,7 @@ textarea {
 .editor-container {
   height: calc(100vh - 110px);
   margin: 20px;
-	padding: 20px;
+  padding: 20px;
   border-radius: 0.25rem;
   background-color: #fff;
 }
