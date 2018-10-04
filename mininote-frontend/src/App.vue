@@ -161,7 +161,7 @@ button {
 .alert {
   width: 500px;
   position: fixed;
-  top: 15px;
+  top: 65px;
   left: calc(50% - 250px);
   z-index: 999;
   text-align: center;
