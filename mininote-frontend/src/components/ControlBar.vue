@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="col-2"></div>
-        <div class="col-2 action-buttons-container" v-if="state.loaded">
+        <div class="col-2 action-buttons-container">
           <button class="btn btn-primary float-right" @click="updateNotebook" v-if="hasChanges">&#x1f4be;</button>
           <button class="btn btn-primary float-right" @click="tryReset" v-if="hasChanges">&#x21ba;</button>
           <button class="btn btn-primary float-right" v-if="state.loaded" v-b-modal.settingsModal>&#x2699;</button>
@@ -45,7 +45,7 @@ import { md5 } from "./../services/md5";
 
 export default {
   name: "control-bar",
-  props: ["hasChanges", "notes", "selectedNote"],
+  props: ["hasChanges", "notes"],
   data() {
     return {
       notebookInput: "",
@@ -54,7 +54,7 @@ export default {
         opening: false,
         creating: false,
         loaded: false
-			},
+      },
       settings: {
         password: ""
       }
