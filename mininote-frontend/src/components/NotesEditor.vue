@@ -3,13 +3,13 @@
     <div class="row">
       <transition name="collapse">
         <div v-if="showEditor" class="col editor-container">
-          <button class="btn btn-primary btn-editor" @click="showEditor = !showEditor">&#x21e4;</button>
+          <button class="btn btn-primary btn-editor" @click="toggleEditor()">◀</button>
           <textarea :value="note.content" @input="onInput"></textarea>
         </div>
       </transition>
       <div class="col editor-container result-container">
         <transition name="fade">
-          <button class="btn btn-primary btn-results" @click="showEditor = !showEditor" v-if="!showEditor">&#x21a6;</button>
+          <button class="btn btn-primary btn-results" @click="toggleEditor()" v-if="!showEditor">▶</button>
         </transition>
         <div class="text-compiled" v-html="textCompiled"></div>
       </div>
@@ -24,9 +24,11 @@ let timeout = null;
 
 export default {
   name: 'notes-editor',
-  props: ['showEditor', 'note'],
+  props: ['note'],
   data() {
-    return {}
+    return {
+      showEditor: true
+    }
   },
   computed: {
     textCompiled() { return marked(this.note.content) }
@@ -38,6 +40,9 @@ export default {
       timeout = setTimeout(function() {
         vm.note.content = e.target.value
       }, 500)
+    },
+    toggleEditor: function() {
+      this.showEditor = !this.showEditor;
     }
   }
 }
@@ -63,18 +68,19 @@ textarea {
 
 .btn {
 	position: absolute;
-	top: 0;
+	top: 45%;
 	width: 20px;
-	height: 100%;
 	padding: 0;
 }
 
 .btn-editor {
 	right: 0;
+  border-radius: 4px 0 0 4px;
 }
 
 .btn-results {
 	left: 0;
+  border-radius: 0 4px 4px 0;
 }
 
 .result-container {
