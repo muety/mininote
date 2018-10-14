@@ -42,20 +42,20 @@
           md5(this.$route.params.password),
           { password }
         )
-          .then(() => {
-            this.onNotebookSave()
+          .then((res) => {
+            this.onNotebookSave(res)
             this.newPasswordInput = ""
           })
           .catch(() => vm.showAlert("An error has occured. Sorry."));
       },
       onNotebookSave: function(res) {
-        let vm = this;
         if (res && typeof res === "object") {
-          vm.showAlert("Notebook saved successfully.", "success");
-          vm.$emit("notesLoaded", res);
+          this.showAlert("Notebook saved successfully.", "success");
+          // Set the new password -> Navigate to the overview page with new password set
+          this.$router.push({ name: 'notebookpage', params: { notebookId: this.$route.params.notebookId, password: this.newPasswordInput, showAlert: this.showAlert } })
         } else if (res && typeof res === "string" && res === "unauthorized") {
-          vm.showAlert("You are not authorized to access this note. Wrong password?");
-        } else vm.showAlert("An error has occured. Sorry.");
+          this.showAlert("You are not authorized to access this note. Wrong password?");
+        } else this.showAlert("An error has occured. Sorry.");
       },
     }
   };

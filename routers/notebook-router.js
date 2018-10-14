@@ -36,6 +36,14 @@ router.post('/notebook', (req, res) => {
     else return res.status(500).end()
 })
 
+router.get('/notebook', (req, res) => {
+  if (config.SHOW_LIST) {
+    res.status(200).send(notebooks.find().map(notebookData => notebookData.id))
+  } else {
+    res.status(204).send(notebooks.count())
+  }
+})
+
 router.get('/notebook/:id/notes', (req, res) => {
     let notebook = notebooks.findOne({ id: req.params.id })
     if (!notebook) return res.status(404).end()

@@ -1,10 +1,16 @@
 <template>
   <div class="noteseditpage">
     <b-modal id="recentChangesModal" ref="recentChangesModalRef" title="Save changes?" @ok="_handleDirtyNoteSave" @cancel="_handleDirtyNoteDiscard" ok-title="Yes" cancel-title="No">You're have unsaved changes to this note. Do you want to save them?</b-modal>
-    <div class="col editor-container">
-      <textarea :value="note.content" @input="onInput"></textarea>
-    </div>
+    <transition name="collapse">
+      <div v-if="showEditor" class="col editor-container">
+        <button class="btn btn-primary btn-editor" @click="toggleEditor()">◀</button>
+        <textarea :value="note.content" @input="onInput"></textarea>
+      </div>
+    </transition>
     <div class="col editor-container result-container">
+      <transition name="fade">
+        <button class="btn btn-primary btn-results" @click="toggleEditor()" v-if="!showEditor">▶</button>
+      </transition>
       <div v-html="textCompiled"></div>
     </div>
   </div>
@@ -25,6 +31,7 @@
     data() {
       return {
         note: { content: "", dirty: false },
+        showEditor: true,
       }
     },
     computed: {
@@ -33,6 +40,9 @@
     methods: {
       navigateBack: function () {
         this.$router.go(-1)
+      },
+      toggleEditor: function() {
+        this.showEditor = !this.showEditor;
       },
       onInput: function(e) {
         let vm = this
@@ -152,5 +162,29 @@
 
   .result-container {
     overflow: auto;
+  }
+
+  .collapse-enter-active, .collapse-leave-active {
+    transition: flex-grow .35s linear;
+  }
+
+  .collapse-leave, .collapse-enter-to {
+    flex-grow: 1;
+  }
+
+  .collapse-enter, .collapse-leave-to {
+    flex-grow: 0;
+  }
+
+  .fade-enter-active, .fade-enter-leave {
+    transition: opacity .35s linear;
+  }
+
+  .fade-leave, .fade-enter-to {
+    opacity: 1;
+  }
+
+  .fade-leave-to, .fade-enter {
+    opacity: 0;
   }
 </style>
