@@ -1,5 +1,5 @@
 <template>
-  <NotebookList :notebooks="notebooks" v-bind:refreshNotebooks="loadNotebooks"></NotebookList>
+  <NotebookList :notebooks="notebooks" :notebookListCount="notebookListCount" v-bind:refreshNotebooks="loadNotebooks"></NotebookList>
 </template>
 
 <script>
@@ -12,6 +12,7 @@
     data() {
       return {
         notebooks: [],
+        notebookListCount: 0,
       }
     },
     components: {
@@ -25,7 +26,13 @@
         let vm = this;
         NotesApiService.list()
           .then(res => {
-            vm.notebooks = res
+            if (typeof res === 'array') {
+              vm.notebookListCount = res.length
+              vm.notebooks = res
+            } else {
+              vm.notebookListCount = res.count
+              vm.notebooks = []
+            }
           })
           .catch(() => {
             // Noting to do if the loading failes. Simply show no list!

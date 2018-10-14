@@ -5,7 +5,14 @@ export default {
         let req = new Request(apiBaseUrl + 'notebook', { method: 'GET' })
         return fetch(req)
             .then(res => {
-                return res.json()
+                if (res.status === 200) {
+                    return res.json()
+                } else if (res.status === 204) {
+                    return { count: res.body }
+                } else {
+                    return []
+                }
+
             })
     },
     exists: function(notebookId) {

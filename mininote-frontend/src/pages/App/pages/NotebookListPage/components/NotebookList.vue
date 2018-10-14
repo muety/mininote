@@ -10,7 +10,7 @@
         </b-list-group>
       </div>
       <div v-else class="placeholder">
-        Please create your first notebook.
+        {{ notebookPlaceholder }}
       </div>
       <NewNotebookDialog class="notebookDialogButton" v-bind:refreshNotebooks="refreshNotebooks"></NewNotebookDialog>
     </span>
@@ -22,10 +22,21 @@
 
   export default {
     name: 'notebook-list',
-    props: ['notebooks', 'refreshNotebooks'],
+    props: ['notebooks', 'notebookListCount', 'refreshNotebooks'],
     components: {
       NewNotebookDialog,
     },
+    computed: {
+      notebookPlaceholder: function() {
+        let content
+        if (this.notebookListCount === 0) {
+          content = "your first"
+        } else {
+          content = "or open a"
+        }
+        return `Please create ${content} notebook.`
+      }
+    }
   }
 </script>
 

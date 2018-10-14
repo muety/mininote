@@ -29,7 +29,11 @@ app.head('/api/notebook/:id', (req, res) => {
 })
 
 app.get('/api/notebook', (req, res) => {
-    res.status(200).send(notebooks.find().map(notebookData => notebookData.id))
+    if (config.SHOW_LIST) {
+      res.status(200).send(notebooks.find().map(notebookData => notebookData.id))
+    } else {
+      res.status(204).send(notebooks.count())
+    }
 })
 
 app.post('/api/notebook', (req, res) => {
