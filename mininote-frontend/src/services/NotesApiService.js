@@ -1,4 +1,4 @@
-const apiBaseUrl = 'http://localhost:8081/api/'
+const apiBaseUrl = 'api/'
 
 export default {
     list: function() {
