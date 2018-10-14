@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App.vue matches snapshot 1`] = `
+<div id="app">
+  <div class="logo"><span>✎ Mini_Note</span> <span class="small">BETA</span></div>
+  <div class="container-fluid">
+    <!---->
+    <!---->
+    <controlbar-stub></controlbar-stub>
+    <!---->
+    <div>
+      <div class="placeholder"><span>Please open an existing notebook or create a new one.</span></div>
+    </div>
+  </div>
+  <div class="footer">Made w/ ♡ by
+    <a href="http://ferdinand-muetsch.de">Ferdinand Mütsch</a> |
+    <a href="http://github.com/n1try/mininote">GitHub</a></div>
+</div>
+`;
