@@ -58,7 +58,55 @@ app.put('/api/notebook/:id/notes', (req, res) => {
     res.send(notebook.notes)
 })
 
+app.get('/api/notebook/:id/:name', (req, res) => {
+  let notebook = notebooks.findOne({ id: req.params.id })
+  if (!notebook) return res.status(404).end()
+  if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+  let note = notebook.notes.find(n => n.id == req.params.name)
+  if (!note) return res.status(404).end()
+  res.send(note)
+})
+
+app.post('/api/notebook/:id/:name', (req, res) => {
+  if (!req.body || !(typeof req.body === 'object')) return res.status(400).end()
+  let notebook = notebooks.findOne({ id: req.params.id })
+  if (!notebook) return res.status(404).end()
+  if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+  let id = Math.max(...notebook.notes.map(o => o.id), 0) + 1
+  notebook.notes.push({
+    id,
+    title: req.params.name,
+    content: '',
+  })
+  notebooks.update(notebook)
+  res.send({ notes: notebook.notes, createdId: id })
+})
+
+app.put('/api/notebook/:id/:name', (req, res) => {
+  if (!req.body || !(typeof req.body === 'object')) return res.status(400).end()
+  let notebook = notebooks.findOne({ id: req.params.id })
+  if (!notebook) return res.status(404).end()
+  if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+  let note = notebook.notes.find(note => note.id == req.params.name)
+  if (!note) return res.status(404).end()
+  // update
+  note.content = req.body.content
+  notebooks.update(notebook)
+  res.send(note)
+})
+
+app.delete('/api/notebook/:id/:name', (req, res) => {
+  let notebook = notebooks.findOne({ id: req.params.id })
+  if (!notebook) return res.status(404).end()
+  if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+  let newNotesArr = notebook.notes.filter(note => note.id != req.params.name)
+  notebook.notes = newNotesArr
+  notebooks.update(notebook)
+  res.status(200).end()
+})
+
 app.put('/api/notebook/:id/settings', (req, res) => {
+    console.log(`Change settings for ${req.params.id}`)
     if (!req.body) return res.status(400).end()
     let notebook = notebooks.findOne({ id: req.params.id })
     if (!notebook) return res.status(404).end()
