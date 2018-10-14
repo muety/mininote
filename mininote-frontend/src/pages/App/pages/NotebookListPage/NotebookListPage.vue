@@ -26,7 +26,7 @@
         let vm = this;
         NotesApiService.list()
           .then(res => {
-            if (typeof res === 'array') {
+            if (Array.isArray(res)) {
               vm.notebookListCount = res.length
               vm.notebooks = res
             } else {

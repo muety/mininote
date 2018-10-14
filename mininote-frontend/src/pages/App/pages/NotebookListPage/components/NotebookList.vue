@@ -1,7 +1,7 @@
 <template>
   <div class="notebook-list">
     <span>
-      <div v-if="notebooks.length > 0">
+      <div v-if="hasNotebookList">
         <span class="header">Existing notebooks:</span>
         <b-list-group class="list">
           <b-list-group-item :key="notebook" v-for="notebook in notebooks">
@@ -35,6 +35,9 @@
           content = "or open a"
         }
         return `Please create ${content} notebook.`
+      },
+      hasNotebookList: function() {
+        return this.notebooks.length > 0
       }
     }
   }
