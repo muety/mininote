@@ -29,7 +29,7 @@ app.head('/api/notebook/:id', (req, res) => {
 })
 
 app.get('/api/notebook', (req, res) => {
-    res.status(201).send(notebooks.find().map(notebookData => notebookData.id))
+    res.status(200).send(notebooks.find().map(notebookData => notebookData.id))
 })
 
 app.post('/api/notebook', (req, res) => {
