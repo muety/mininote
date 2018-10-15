@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ControlBar.vue matches snapshot 1`] = `
+<div>
+  <b-modal id="discardModal" title="Save changes?">You're about to discard all recent changes to your notebook. Are you sure you want to proceed?</b-modal>
+  <b-modal id="settingsModal" size="lg" title="Settings" ok-title="Save">
+    <b-container fluid="">
+      <b-row>
+        <b-col sm="3"><label for="newPasswordInput">Password:</label></b-col>
+        <b-col>
+          <b-form-input id="newPasswordInput" type="text" placeholder="Enter new password for this notebook."></b-form-input>
+        </b-col>
+      </b-row>
+    </b-container>
+  </b-modal>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-4"></div>
+      <div class="col-4">
+        <div id="notebook-chooser" class="input-group">
+          <div class="input-group-btn"><button type="button" class="btn btn-danger">╳</button></div> <input type="text" placeholder="Open or create notebook ..." autofocus="autofocus" class="form-control">
+          <!---->
+          <!---->
+          <div class="input-group-btn"><button type="button" disabled="disabled" class="btn btn-primary">Open</button>
+            <!---->
+            <!---->
+          </div>
+        </div>
+      </div>
+      <div class="col-2"></div>
+      <div class="col-2 action-buttons-container">
+        <!---->
+        <!---->
+        <!---->
+      </div>
+    </div>
+  </div>
+</div>
+`;

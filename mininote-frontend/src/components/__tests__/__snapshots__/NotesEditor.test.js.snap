@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotesEditor.vue matches snapshot 1`] = `
+<div class="container-fluid">
+  <div class="row">
+    <div class="col editor-container" name="collapse"><button class="btn btn-primary btn-editor">◀</button> <textarea></textarea></div>
+    <div class="col editor-container result-container">
+      <!---->
+      <div class="text-compiled"></div>
+    </div>
+  </div>
+</div>
+`;
