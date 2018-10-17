@@ -51,6 +51,8 @@
             if (exists) {
               vm.state.opening = true;
               setTimeout(() => vm.$refs.refOpenPasswordInput.focus(), 0);
+            } else {
+              vm.showAlert(`The notebook '${this.notebookNameInput}' does not exist.`);
             }
           })
           .catch(() => {
