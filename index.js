@@ -38,3 +38,6 @@ if (!server) {
 server.listen(port, () => {
     console.log(`Listening on localhost:${port}.`)
 })
+
+
+module.exports = app;
