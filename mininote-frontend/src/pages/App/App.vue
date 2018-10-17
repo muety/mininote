@@ -67,9 +67,24 @@
     flex: 1 0 auto;
   }
 
+  button {
+    cursor: pointer;
+  }
+
   .btn-primary {
     background-color: #42B983;
     border-color: #42B983;
+  }
+
+  .btn-primary:disabled {
+    background-color: #bbb;
+    border-color: #bbb;
+    cursor: default;
+  }
+
+  .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled):hover {
+    background-color: #3faf7b;
+    border-color: #3faf7b;
   }
 
   .alert {
