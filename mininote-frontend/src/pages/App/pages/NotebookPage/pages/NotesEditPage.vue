@@ -3,15 +3,15 @@
     <b-modal id="recentChangesModal" ref="recentChangesModalRef" title="Save changes?" @ok="_handleDirtyNoteSave" @cancel="_handleDirtyNoteDiscard" ok-title="Yes" cancel-title="No">You're have unsaved changes to this note. Do you want to save them?</b-modal>
     <transition name="collapse">
       <div v-if="showEditor" class="col editor-container">
-        <button class="btn btn-primary btn-editor" @click="toggleEditor()">◀</button>
+        <button class="btn btn-editor btn-toggle" @click="toggleEditor()" title="Hide edit area">◀</button>
         <textarea :value="note.content" @input="onInput"></textarea>
       </div>
     </transition>
-    <div class="col editor-container result-container">
+    <div class="col result-container">
       <transition name="fade">
-        <button class="btn btn-primary btn-results" @click="toggleEditor()" v-if="!showEditor">▶</button>
+        <button class="btn btn-results btn-toggle" @click="toggleEditor()" v-if="!showEditor" title="Show edit area">▶</button>
       </transition>
-      <div v-html="textCompiled"></div>
+      <div class="result-content" v-html="textCompiled"></div>
     </div>
   </div>
 </template>
@@ -145,6 +145,24 @@
     height: 100%;
   }
 
+  .btn-toggle {
+    background-color: white;
+  }
+
+  .btn-toggle:active, .btn-toggle:focus {
+    box-shadow: none;
+  }
+
+  .btn-editor {
+    align-self: flex-end;
+    margin: -12px -12px 12px 0;
+  }
+
+  .btn-results {
+    align-self: flex-start;
+    margin: -12px 0 12px -12px;
+  }
+
   textarea {
     border: 0;
     width: 100%;
@@ -153,15 +171,18 @@
     outline: none;
   }
 
-  .editor-container {
-    margin: 20px;
+  .editor-container, .result-container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 20px;
     padding: 20px;
     border-radius: 0.25rem;
     background-color: #fff;
+    max-height: 85vh;
   }
 
-  .result-container {
-    overflow: auto;
+  .result-container .result-content {
+    overflow-y: scroll;
   }
 
   .collapse-enter-active, .collapse-leave-active {
