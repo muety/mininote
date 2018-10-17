@@ -3,7 +3,8 @@
     <div class="input-group-btn">
       <button type="button" class="btn btn-danger" @click="closeNotebook" :disabled="!state.opened">&#x2573;</button>
     </div>
-    <input type="text" class="form-control" placeholder="Enter name to open notebook" v-model="notebookNameInput" ref="refNotebookInput" @keyup.enter="checkNotebookState" autofocus v-if="!state.opening" />
+    <input type="text" class="form-control" disabled :value="$route.params.notebookId" v-if="state.opened" />
+    <input type="text" class="form-control" placeholder="Enter name to open notebook" v-model="notebookNameInput" ref="refNotebookInput" @keyup.enter="checkNotebookState" autofocus v-if="!state.opening && !state.opened" />
     <input type="password" class="form-control" :placeholder="passwordInputPlaceholder" v-model="notebookPasswordInput" ref="refOpenPasswordInput" @keyup.enter="openNotebook" v-if="state.opening" />
     <div class="input-group-btn col-2 action-buttons-container">
       <button @click="$root.$emit('bv::show::modal', 'settingsModal')" v-if="state.opened" class="btn btn-primary float-right">&#x2699;</button>
