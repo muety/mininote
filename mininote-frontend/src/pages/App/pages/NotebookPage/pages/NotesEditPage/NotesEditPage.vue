@@ -27,9 +27,9 @@
 </template>
 
 <script>
-  import NotesApiService from "../../../../../../services/NotesApiService";
-  import { md5 } from "../../../../../../services/md5";
-  import { marked } from "../../../../../../services/marked";
+  import NotesApiService from "../../../../services/NotesApiService";
+  import { md5 } from "../../../../services/md5";
+  import { marked } from "../../../../services/marked";
 
   let timeout = null;
 

@@ -16,7 +16,7 @@
 
 <script>
   import SettingsModal from "./SettingsModal";
-  import NotesApiService from "../../../services/NotesApiService";
+  import NotesApiService from "../services/NotesApiService";
 
   export default {
     name: 'control-bar',

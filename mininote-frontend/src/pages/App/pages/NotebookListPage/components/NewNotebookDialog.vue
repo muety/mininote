@@ -27,8 +27,8 @@
 </template>
 
 <script>
-  import NotesApiService from "../../../../../services/NotesApiService";
-  import { md5 } from "../../../../../services/md5";
+  import NotesApiService from "../../../services/NotesApiService";
+  import { md5 } from "../../../services/md5";
 
   export default {
     props: ['refreshNotebooks'],

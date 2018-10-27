@@ -3,7 +3,7 @@
 </template>
 
 <script>
-  import NotesApiService from "../../../../services/NotesApiService";
+  import NotesApiService from "../../services/NotesApiService";
 
   import NotebookList from './components/NotebookList'
 

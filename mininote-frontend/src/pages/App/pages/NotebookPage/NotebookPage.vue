@@ -8,8 +8,8 @@
 
 <script>
   import NotesList from './components/NotesList';
-  import NotesApiService from "../../../../services/NotesApiService";
-  import { md5 } from "../../../../services/md5";
+  import NotesApiService from "../../services/NotesApiService";
+  import { md5 } from "../../services/md5";
 
   export default {
     name: "notebook-page",
