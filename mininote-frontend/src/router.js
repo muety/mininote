@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 import App from './pages/App/App'
 import NotebookListPage from './pages/App/pages/NotebookListPage/NotebookListPage'
 import NotebookPage from './pages/App/pages/NotebookPage/NotebookPage'
-import NotesEditPage from './pages/App/pages/NotebookPage/pages/NotesEditPage'
+import NotesEditPage from './pages/App/pages/NotebookPage/pages/NotesEditPage/NotesEditPage'
 
 const router = new VueRouter({
   routes: [
