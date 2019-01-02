@@ -42,4 +42,4 @@ This project is still under development. The following features are about to be 
 Feel free to contribute! All contributions that add value to the project are welcome. However, please be aware that you are not done after having opened a PR. In order to keep quality high, it is expected that you implement change requests and react to comments within an adequate time, until your code is merged. Otherwise your PRs will be closed after a while, sorry!
 
 ## License
-MIT @ [Ferdinand Mütsch](https://ferdinand-muetsch.de)
+MIT @ [Ferdinand Mütsch](https://muetsch.io)
