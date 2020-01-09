@@ -1,17 +1,25 @@
-'use strict';
+'use strict'
 
 const express = require('express'),
     router = express.Router(),
-    notebookController = require('../controllers/notebook');
+    notebookController = require('../controllers/notebook')
 
-router.head('/notebook/:id', notebookController.exist);
+router.post('/notebook', notebookController.create)
 
-router.post('/notebook', notebookController.create);
+router.head('/notebook/:id', notebookController.exist)
 
-router.get('/notebook/:id/notes', notebookController.getNotes);
+router.put('/notebook/:id', notebookController.update)
 
-router.put('/notebook/:id/notes', notebookController.updateNotes);
+router.delete('/notebook/:id', notebookController.delete)
 
-router.put('/notebook/:id/settings', notebookController.updateSettings);
+router.get('/notebook/:id/notes', notebookController.getNotes)
 
-module.exports = router;
+router.post('/notebook/:id/notes', notebookController.addNote)
+
+router.put('/notebook/:id/notes/:noteId', notebookController.updateNote)
+
+router.delete('/notebook/:id/notes/:noteId', notebookController.deleteNote)
+
+router.put('/notebook/:id/settings', notebookController.updateSettings)
+
+module.exports = router

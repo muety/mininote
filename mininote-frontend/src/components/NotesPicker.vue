@@ -27,10 +27,9 @@
 <script>
 export default {
   name: 'notes-picker',
-  props: ['notes'],
+  props: ['notes', 'selectedNoteId'],
   data() {
     return {
-      selectedNoteId: this.notes.reduce((acc, n) => Math.min(acc, n.id), Number.MAX_VALUE),
       query: '',
       newNoteInput: ''
     }
@@ -46,25 +45,23 @@ export default {
   },
   methods: {
     selectNote: function(noteId) {
-      this.selectedNoteId = noteId
       this.$emit('noteSelected', noteId)
     },
     addNote: function() {
       if (!this.newNoteInput) return
       let note = {
-        id: this.notes.reduce((acc, n) => Math.max(acc, n.id), 0) + 1,
+        id: this.notes.reduce((acc, n) => Math.max(acc, n.id), 0) * 10 + 1,
         title: this.newNoteInput,
-        content: ''
+        content: '',
+        isNew: true
       }
       this.$emit('addNote', note)
       this.newNoteInput = ''
-      this.selectedNoteId = note.id
-      this.$emit('noteSelected', this.selectedNoteId)
+      this.$emit('noteSelected', note.id)
     },
     deleteNote: function(note) {
       this.$emit('deleteNote', note)
-      this.selectedNoteId = this.notes.reduce((acc, n) => n.id !== note.id ? Math.max(acc, n.id) : acc, 0)
-      this.$emit('noteSelected', this.selectedNoteId)
+      this.$emit('noteSelected', this.notes.reduce((acc, n) => n.id !== note.id ? Math.max(acc, n.id) : acc, 0))
     }
   }
 }

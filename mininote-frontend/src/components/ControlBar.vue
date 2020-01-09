@@ -45,7 +45,7 @@ import { md5 } from "./../services/md5";
 
 export default {
   name: "control-bar",
-  props: ["hasChanges", "notes"],
+  props: ["hasChanges", "notes", "notesInitial"],
   data() {
     return {
       notebookInput: "",
@@ -153,11 +153,23 @@ export default {
     },
     updateNotebook: function() {
       let vm = this;
-      NotesApiService.updateNotes(
-        this.notebookInput.toLowerCase(),
-        md5(this.passwordInput),
-        this.notes
-      )
+
+      let promises = []
+
+      promises = promises.concat(this.notes
+        .filter(n => n.hasOwnProperty('isNew'))
+        .map(n => NotesApiService.addNote(this.notebookInput.toLowerCase(), md5(this.passwordInput), n)))
+
+      promises = promises.concat(this.notes
+        .filter(n => !n.hasOwnProperty('isNew'))
+        .filter(n1 => this.notesInitial.find(n2 => n1.id === n2.id).content !== n1.content)
+        .map(n => NotesApiService.updateNote(this.notebookInput.toLowerCase(), md5(this.passwordInput), n)))
+
+      promises = promises.concat(this.notesInitial
+        .filter(n1 => !this.notes.some(n2 => n1.id === n2.id))
+        .map(n => NotesApiService.deleteNote(this.notebookInput.toLowerCase(), md5(this.passwordInput), n)))
+
+      Promise.all(promises)
         .then(this.onNotebookSave)
         .catch(() => {
           vm.$emit("alert", "An error has occured. Sorry.");
@@ -177,15 +189,21 @@ export default {
     },
     onNotebookSave: function(res) {
       let vm = this;
-      if (res && typeof res === "object") {
-        vm.$emit("alert", "Notebook saved successfully.", "success");
-        vm.$emit("notesLoaded", res);
-      } else if (res && typeof res === "string" && res === "unauthorized") {
-        vm.$emit(
-          "alert",
-          "You are not authorized to access this note. Wrong password?"
-        );
-      } else vm.$emit("alert", "An error has occured. Sorry.");
+
+      if (!res || !Array.isArray(res) || res.some(r => r === null)) return vm.$emit("alert", "An error has occured. Sorry.");
+      if (res.some(r => r === 'unauthorized')) return vm.$emit("alert", "You are not authorized to access this note. Wrong password?");
+      if (res.some(r => r === 'not found')) return vm.$emit("alert", "Could not find requested resource.");
+
+      let newNotes = this.notes.filter(n => n.hasOwnProperty('isNew'))
+      let createdNotes = res.filter(r => r.hasOwnProperty('id'))
+
+      for (let i in newNotes) {
+        newNotes[i].id = createdNotes[i].id
+        delete newNotes[i].isNew
+      }
+
+      vm.$emit("alert", "Notebook saved successfully.", "success");
+      vm.$emit("notesLoaded", JSON.parse(JSON.stringify(this.notes)));
     }
   }
 };

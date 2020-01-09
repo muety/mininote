@@ -7,10 +7,10 @@
     <div class="container-fluid">
       <b-alert show v-if="alert && alert.variant === 'danger'" variant="danger">{{ alert.text }}</b-alert>
       <b-alert show v-if="alert && alert.variant === 'success'" variant="success">{{ alert.text }}</b-alert>
-      <control-bar @alert="showAlert" :hasChanges="hasChanges" :notes="notes" @notesLoaded="onNotesLoaded" @discardChanges="discardChanges"></control-bar>
+      <control-bar @alert="showAlert" :hasChanges="hasChanges" :notes="notes" :notesInitial="notesInitial" @notesLoaded="onNotesLoaded" @discardChanges="discardChanges"></control-bar>
       <div class="row" v-if="notes">
         <div class="col-2">
-          <notes-picker :notes="notes" @noteSelected="onNoteSelected" @alert="showAlert" @addNote="addNote" @deleteNote="deleteNote"></notes-picker>
+          <notes-picker :notes="notes" :selectedNoteId="selectedNoteId" @noteSelected="onNoteSelected" @alert="showAlert" @addNote="addNote" @deleteNote="deleteNote"></notes-picker>
         </div>
         <div class="col-10" v-if="selectedNote">
           <notes-editor :showEditor="showEditor" :note="selectedNote" @alert="showAlert"></notes-editor>
@@ -64,7 +64,7 @@ export default {
     NotesPicker,
     ControlBar
   },
-  created(){
+  created() {
     window.addEventListener("beforeunload", this.didIntentToLeave);
   },
   methods: {
@@ -73,9 +73,13 @@ export default {
     },
     onNotesLoaded: function(notes) {
       let isInitialLoad = !this.notesInitial
+      let selectedIdValid = notes ? notes.some(n => n.id === this.selectedNoteId) : true
+      
       this.notes = notes
       this.notesInitial = notes ? JSON.parse(JSON.stringify(notes)) : null
+
       if (isInitialLoad) this.selectedNoteId = notes ? this.notes.reduce((acc, n) => Math.min(acc, n.id), Number.MAX_VALUE) : 0
+      else if (!selectedIdValid) this.selectedNoteId = this.notes.reduce((acc, n) => Math.max(acc, n.id), 0)
     },
     addNote: function(note) {
       this.notes.push(note)

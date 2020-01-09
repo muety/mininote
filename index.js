@@ -9,13 +9,14 @@ const config = require('./config'),
     debug = process.env.NODE_ENV === 'dev' || config.DEBUG,
     notebookRouter = require('./routers/notebook')
 
-let server;
+let server
 
 app.use(express.static('public'))
 app.use(bodyParser.json())
 
 if (debug) app.use(cors())
-app.use('/api', notebookRouter);
+
+app.use('/api', notebookRouter)
 
 if (config.HTTPS_KEY && config.HTTPS_CERT) {
     const https = require('https'),
@@ -39,4 +40,4 @@ server.listen(port, () => {
 })
 
 
-module.exports = app;
+module.exports = app
