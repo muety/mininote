@@ -50,7 +50,7 @@ export default {
     addNote: function() {
       if (!this.newNoteInput) return
       let note = {
-        id: this.notes.reduce((acc, n) => Math.max(acc, n.id), 0) * 10 + 1,
+        id: this.notes.reduce((acc, n) => Math.max(acc, n.id), 0) + this.notes.length + 1,
         title: this.newNoteInput,
         content: '',
         isNew: true

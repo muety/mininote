@@ -25,9 +25,6 @@ A simple, self-hosted Markdown note-taking app built with [VueJS](https://vuejs.
 3. `docker run -d -p 3000:3000 -v /your-dir-of-choice:/app/data mininote`
 --> MiniNote will listen on port 3000 and persist data to `/your-dir-of-choice` on your host system using a shared volume.
 
-## How to run tests?
-1. `npm test`
-
 ## Use HTTPS for backend
 1. Open `config.js`
 2. Edit the `HTTPS_KEY` and `HTTPS_CERT` field, and insert the file locations at which your private key and site certifications are stored.
