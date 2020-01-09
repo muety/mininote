@@ -9,7 +9,6 @@ const config = require('./config'),
     debug = process.env.NODE_ENV === 'dev' || config.DEBUG,
     notebookRouter = require('./routers/notebook')
 
-
 let server;
 
 app.use(express.static('public'))

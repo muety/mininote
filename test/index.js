@@ -1,9 +1,21 @@
-var request = require('supertest');
-var expect = require('chai').expect;
-var app = require('../index');
-
+const fs = require('fs')
+  path = require('path'),
+  config = require('../config'),
+  request = require('supertest'),
+  expect = require('chai').expect,
+  app = require('../index');
 
 describe('Mininote server', function() {
+  
+  afterEach(function(done) {
+    try {
+      fs.unlinkSync(path.resolve(config.DB_FILE))
+      fs.unlinkSync(path.resolve(config.DB_FILE + '.0'))
+    } catch(e) {
+    } finally {
+      done()
+    }
+  })
 
   it('Create a notebook POST /api/notebook ', function(done) {
       request(app)
@@ -14,9 +26,7 @@ describe('Mininote server', function() {
       .expect(201, function(err, res) {
         if (err) { return done(err); }
         callStatus = res.body.id;
-        console.dir(callStatus);
         expect(callStatus).to.be.a('string');
-        // Done
         done();
       });
   });
