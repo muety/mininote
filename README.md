@@ -31,6 +31,10 @@ A simple, self-hosted Markdown note-taking app built with [VueJS](https://vuejs.
 3. Launch the backend server
 --> To switch back to the HTTP server, nullify either field and relaunch again.
 
+
+##Test 
+1. Enter to test folder: cd test
+2. Execute mocha index.js
 ## Todo
 This project is still under development. The following features are about to be implemented. Feel free to contribute.
 * Tests
