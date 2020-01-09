@@ -7,7 +7,7 @@ const config = require('./config'),
     bodyParser = require('body-parser'),
     port = process.env.PORT || config.PORT,
     debug = process.env.NODE_ENV === 'dev' || config.DEBUG,
-    notebookRouter = require('./routers/notebook-router')
+    notebookRouter = require('./routers/notebook')
 
 
 let server;

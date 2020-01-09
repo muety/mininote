@@ -1,9 +1,8 @@
 'use strict';
 
 const express = require('express'),
-    router = express.Router();
-
-const notebookController = require('../controllers/NotebookController');
+    router = express.Router(),
+    notebookController = require('../controllers/notebook');
 
 router.head('/notebook/:id', notebookController.exist);
 
