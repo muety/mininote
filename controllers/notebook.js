@@ -4,18 +4,19 @@ const config = require('../config'),
     lfsa = require('lokijs/src/loki-fs-structured-adapter'),
     loki = require('lokijs'),
     db = new loki(config.DB_FILE, {
-    adapter: new lfsa(),
-    autoload: true,
-    autoloadCallback: initDb,
-    autosave: true,
-    autosaveInterval: 4000
+        adapter: new lfsa(),
+        autoload: true,
+        autoloadCallback: initDb,
+        autosave: true,
+        autosaveInterval: 4000
   });
 
 let notebooks;
 
 function initDb() {
-    if (!db.getCollection(config.DB_COLLECTION_MAIN))
+    if (!db.getCollection(config.DB_COLLECTION_MAIN)) {
         db.addCollection(config.DB_COLLECTION_MAIN);
+    }
     notebooks = db.getCollection(config.DB_COLLECTION_MAIN);
 }
 
