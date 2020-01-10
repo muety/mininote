@@ -9,7 +9,7 @@ A simple, self-hosted Markdown note-taking app built with [VueJS](https://vuejs.
 [![Buy me a coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoff.ee/n1try)
 
 ## Requirements
-* NodeJS >= 6.x
+* NodeJS >= 10.13.x
 
 ## How to run?
 1. `git clone https://github.com/n1try/mininote`

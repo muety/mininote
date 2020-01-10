@@ -1,6 +1,6 @@
 {
     "name": "mininote",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "A simple Mardown note-taking editor",
     "main": "index.js",
     "scripts": {
@@ -27,5 +27,8 @@
         "chai": "^4.2.0",
         "mocha": "^5.2.0",
         "supertest": "^3.3.0"
+    },
+    "engines": {
+        "node": ">=10.13.0"
     }
 }
