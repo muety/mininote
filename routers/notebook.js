@@ -20,6 +20,4 @@ router.put('/notebook/:id/notes/:noteId', notebookController.updateNote)
 
 router.delete('/notebook/:id/notes/:noteId', notebookController.deleteNote)
 
-router.put('/notebook/:id/settings', notebookController.updateSettings)
-
 module.exports = router

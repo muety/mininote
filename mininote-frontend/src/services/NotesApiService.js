@@ -69,14 +69,14 @@ export default {
                 else return null
             })
     },
-    updateSettings: function(notebookId, passwordHash, settings) {
+    updateNotebook: function(notebookId, passwordHash, settings) {
         let headers = new Headers()
         headers.append('Authorization', 'Basic ' + passwordHash)
         headers.append('Content-Type', 'application/json')
-        let req = new Request(`${apiBaseUrl}/notebook/${notebookId}/settings`, { method: 'PUT', body: JSON.stringify(settings), headers: headers })
+        let req = new Request(`${apiBaseUrl}/notebook/${notebookId}`, { method: 'PUT', body: JSON.stringify(settings), headers: headers })
         return fetch(req)
             .then(res => {
-                if (res.status === 200) return res.json()
+                if (res.status === 200) return {}
                 else if (res.status === 401) return 'unauthorized'
                 else if (res.status === 404) return 'not found'
                 else return null

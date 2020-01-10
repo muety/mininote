@@ -1,12 +1,15 @@
 <template>
   <div>
     <b-modal id="discardModal" ref="discardModalRef" title="Save changes?" @ok="discardChanges">You're about to discard all recent changes to your notebook. Are you sure you want to proceed?</b-modal>
-    <b-modal id="settingsModal" ref="settingsModalRef" size="lg" title="Settings" @ok="updateSettings" ok-title="Save">
+    <b-modal id="settingsModal" ref="settingsModalRef" size="lg" title="Notebook Settings" @ok="updateNotebook" ok-title="Save">
       <b-container fluid>
         <b-row>
+          <b-col sm="3"><label for="newNameInput">Name:</label></b-col>
+          <b-col><b-form-input id="newNameInput" type="text" placeholder="Enter new name for this notebook." v-model="notebook.id"/></b-col>
+        </b-row>
+        <b-row>
           <b-col sm="3"><label for="newPasswordInput">Password:</label></b-col>
-          <!-- TODO: Change to password input type as soon as https://github.com/bootstrap-vue/bootstrap-vue/issues/1908 is resolved -->
-          <b-col><b-form-input id="newPasswordInput" type="text" placeholder="Enter new password for this notebook." v-model="settings.password"/></b-col>
+          <b-col><b-form-input id="newPasswordInput" type="password" placeholder="Enter new password for this notebook." v-model="notebook.password"/></b-col>
         </b-row>
       </b-container>
     </b-modal>
@@ -30,7 +33,7 @@
         </div>
         <div class="col-2"></div>
         <div class="col-2 action-buttons-container">
-          <button class="btn btn-primary float-right" @click="updateNotebook" v-if="hasChanges">&#x1f4be;</button>
+          <button class="btn btn-primary float-right" @click="updateNotes" v-if="hasChanges">&#x1f4be;</button>
           <button class="btn btn-primary float-right" @click="tryReset" v-if="hasChanges">&#x21ba;</button>
           <button class="btn btn-primary float-right" v-if="state.loaded" v-b-modal.settingsModal>&#x2699;</button>
         </div>
@@ -50,13 +53,15 @@ export default {
     return {
       notebookInput: "",
       passwordInput: "",
+      passwordHash: "",
       state: {
         opening: false,
         creating: false,
         loaded: false
       },
-      settings: {
-        password: ""
+      notebook: {
+        password: "",
+        name: ""
       }
     };
   },
@@ -73,11 +78,17 @@ export default {
     reset: function() {
       this.notebookInput = "";
       this.passwordInput = "";
+      this.passwordHash = "";
+      this.id = "";
       this.state = {
         opening: false,
         creating: false,
         loaded: false
       };
+      this.notebook = {
+        password: "",
+        id: ""
+      }
       this.$emit("notesLoaded", null);
       setTimeout(() => this.$refs.refNotebookInput.focus(), 0);
     },
@@ -113,6 +124,10 @@ export default {
           if (res && typeof res === "object") {
             vm.state.opening = false;
             vm.state.loaded = true;
+            vm.notebook.id = vm.notebookInput
+            vm.notebook.password = vm.passwordInput
+            vm.passwordHash = md5(vm.notebook.password)
+            vm.id = vm.notebook.id
             vm.$emit("notesLoaded", res);
           } else if (res && typeof res === "string" && res === "unauthorized") {
             vm.$emit(
@@ -134,7 +149,7 @@ export default {
       if (!this.notebookInput || !this.passwordInput) return;
       NotesApiService.create(
         this.notebookInput.toLowerCase(),
-        md5(this.passwordInput)
+        this.passwordHash
       )
         .then(res => {
           if (res) {
@@ -151,43 +166,46 @@ export default {
           vm.$emit("alert", "An error has occured. Sorry.");
         });
     },
-    updateNotebook: function() {
+    updateNotes: function() {
       let vm = this;
 
       let promises = []
 
       promises = promises.concat(this.notes
         .filter(n => n.hasOwnProperty('isNew'))
-        .map(n => NotesApiService.addNote(this.notebookInput.toLowerCase(), md5(this.passwordInput), n)))
+        .map(n => NotesApiService.addNote(this.notebookInput.toLowerCase(), this.passwordHash, n)))
 
       promises = promises.concat(this.notes
         .filter(n => !n.hasOwnProperty('isNew'))
         .filter(n1 => this.notesInitial.find(n2 => n1.id === n2.id).content !== n1.content)
-        .map(n => NotesApiService.updateNote(this.notebookInput.toLowerCase(), md5(this.passwordInput), n)))
+        .map(n => NotesApiService.updateNote(this.notebookInput.toLowerCase(), this.passwordHash, n)))
 
       promises = promises.concat(this.notesInitial
         .filter(n1 => !this.notes.some(n2 => n1.id === n2.id))
-        .map(n => NotesApiService.deleteNote(this.notebookInput.toLowerCase(), md5(this.passwordInput), n)))
+        .map(n => NotesApiService.deleteNote(this.notebookInput.toLowerCase(), this.passwordHash, n)))
 
       Promise.all(promises)
-        .then(this.onNotebookSave)
+        .then(this.onNotesSaved)
         .catch(() => {
           vm.$emit("alert", "An error has occured. Sorry.");
         });
     },
-    updateSettings: function() {
+    updateNotebook: function() {
       let vm = this;
-      let settings = JSON.parse(JSON.stringify(this.settings));
-      settings.password = md5(settings.password);
-      NotesApiService.updateSettings(
-        this.notebookInput.toLowerCase(),
-        md5(this.passwordInput),
-        settings
-      )
-        .then(this.onNotebookSave)
+
+      let updatedNotebook = {}
+      if (this.notebook.id !== this.id) updatedNotebook.id = this.notebook.id
+      if (md5(this.notebook.password) !== this.passwordHash) updatedNotebook.password = md5(this.notebook.password);
+      
+      NotesApiService.updateNotebook(
+          this.notebookInput.toLowerCase(),
+          this.passwordHash,
+          updatedNotebook
+        )
+        .then(this.onNotebookSaved)
         .catch(() => vm.$emit("alert", "An error has occured. Sorry."));
     },
-    onNotebookSave: function(res) {
+    onNotesSaved: function(res) {
       let vm = this;
 
       if (!res || !Array.isArray(res) || res.some(r => r === null)) return vm.$emit("alert", "An error has occured. Sorry.");
@@ -202,8 +220,19 @@ export default {
         delete newNotes[i].isNew
       }
 
+      this.passwordHash = md5(this.notebook.password)
+
       vm.$emit("alert", "Notebook saved successfully.", "success");
       vm.$emit("notesLoaded", JSON.parse(JSON.stringify(this.notes)));
+    },
+    onNotebookSaved: function(res) {
+      let vm = this;
+
+      this.id = this.notebook.id
+      this.passwordHash = md5(this.notebook.password)
+      this.notebookInput = this.id
+
+      vm.$emit("alert", "Notebook saved successfully.", "success");
     }
   }
 };

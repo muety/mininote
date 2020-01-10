@@ -46,7 +46,8 @@ exports.update = (req, res) => {
 
     if (notebooks.findOne({ id: req.body.id })) return res.status(409).end()
 
-    notebook.id = req.body.id
+    if (req.body.id) notebook.id = req.body.id
+    if (req.body.password) notebook.password = req.body.password
     notebooks.update(notebook)
 
     return res.status(200).end()
@@ -113,16 +114,4 @@ exports.deleteNote = (req, res) => {
     notebooks.update(notebook)
 
     return res.status(200).end()
-}
-
-exports.updateSettings = (req, res) => {
-    if (!req.body) return res.status(400).end()
-    let notebook = notebooks.findOne({ id: req.params.id })
-    if (!notebook) return res.status(404).end()
-    if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
-
-    if (req.body.password) notebook.password = req.body.password
-    notebooks.update(notebook)
-    
-    return res.send(notebook.notes)
 }
