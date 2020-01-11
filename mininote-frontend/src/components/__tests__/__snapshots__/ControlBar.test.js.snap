@@ -1,18 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ControlBar.vue matches snapshot 1`] = `
-<div>
-  <b-modal id="discardModal" title="Save changes?">You're about to discard all recent changes to your notebook. Are you sure you want to proceed?</b-modal>
-  <b-modal id="settingsModal" size="lg" title="Settings" ok-title="Save">
-    <b-container fluid="">
-      <b-row>
-        <b-col sm="3"><label for="newPasswordInput">Password:</label></b-col>
-        <b-col>
-          <b-form-input id="newPasswordInput" type="text" placeholder="Enter new password for this notebook."></b-form-input>
-        </b-col>
-      </b-row>
-    </b-container>
-  </b-modal>
+<div notes="note one,note two">
+  <bmodal-stub title="Save changes?" titletag="h5" size="md" buttonsize="" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="secondary" okvariant="primary" id="discardModal">You're about to discard all recent changes to your notebook. Are you sure you want to proceed?</bmodal-stub>
+  <bmodal-stub title="Notebook Settings" titletag="h5" size="lg" buttonsize="" headercloselabel="Close" canceltitle="Cancel" oktitle="Save" cancelvariant="secondary" okvariant="primary" id="settingsModal">
+    <bcontainer-stub tag="div" fluid="true">
+      <brow-stub tag="div">
+        <bcol-stub sm="3" tag="div"><label for="newNameInput">Name:</label></bcol-stub>
+        <bcol-stub tag="div">
+          <bforminput-stub value="" type="text" placeholder="Enter new name for this notebook." id="newNameInput"></bforminput-stub>
+        </bcol-stub>
+      </brow-stub>
+      <brow-stub tag="div">
+        <bcol-stub sm="3" tag="div"><label for="newPasswordInput">Password:</label></bcol-stub>
+        <bcol-stub tag="div">
+          <bforminput-stub value="" type="password" placeholder="Enter new password for this notebook." id="newPasswordInput"></bforminput-stub>
+        </bcol-stub>
+      </brow-stub>
+    </bcontainer-stub>
+  </bmodal-stub>
   <div class="container-fluid">
     <div class="row">
       <div class="col-4"></div>

@@ -2,7 +2,7 @@
 
 exports[`App.vue matches snapshot 1`] = `
 <div id="app">
-  <div class="logo"><span>✎ Mini_Note</span> <span class="small">BETA</span></div>
+  <div class="logo"><span>✎ Mini_Note</span> <span class="small">BETA </span></div>
   <div class="container-fluid">
     <!---->
     <!---->

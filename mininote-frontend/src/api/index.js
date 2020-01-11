@@ -1,36 +1,52 @@
-const apiBaseUrl = '/api'
+import { ApiError, NotFoundError, UnauthorizedError } from '../lib/errors'
 
-export default {
-    exists: function(notebookId) {
+const apiBaseUrl = 'http://localhost:3000/api'
+
+function generateError(res) {
+    if (res.status === 401) return new UnauthorizedError()
+    if (res.status === 404) return new NotFoundError()
+    return new ApiError()
+}
+
+const api = {
+    exists(notebookId) {
         let req = new Request(`${apiBaseUrl}/notebook/${notebookId}`, { method: 'HEAD' })
-        return fetch(req)
-            .then(res => {
-                return res.status === 200
-            })
+        return fetch(req).then(res => res.status === 200)
     },
-    create: function(notebookId, passwordHash) {
+    create(notebookId, passwordHash) {
         let headers = new Headers()
         headers.append('Content-Type', 'application/json')
         let req = new Request(`${apiBaseUrl}/notebook`, { method: 'POST', body: JSON.stringify({ id: notebookId, password: passwordHash }), headers: headers })
         return fetch(req)
             .then(res => {
                 if (res.status === 201) return res.json()
+                return generateError(res)
+            })
+    },
+    update(notebookId, passwordHash, notebook) {
+        let headers = new Headers()
+        headers.append('Authorization', 'Basic ' + passwordHash)
+        headers.append('Content-Type', 'application/json')
+        let req = new Request(`${apiBaseUrl}/notebook/${notebookId}`, { method: 'PUT', body: JSON.stringify(notebook), headers: headers })
+        return fetch(req)
+            .then(res => {
+                if (res.status === 200) return {}
+                else if (res.status === 401) return 'unauthorized'
+                else if (res.status === 404) return 'not found'
                 else return null
             })
     },
-    getNotes: function(notebookId, passwordHash) {
+    getNotes(notebookId, passwordHash) {
         let headers = new Headers()
         headers.append('Authorization', 'Basic ' + passwordHash)
         let req = new Request(`${apiBaseUrl}/notebook/${notebookId}/notes`, { method: 'GET', headers: headers, mode: 'cors' })
         return fetch(req)
             .then(res => {
                 if (res.status === 200) return res.json()
-                else if (res.status === 401) return 'unauthorized'
-                else if (res.status === 404) return 'not found'
-                else return null
+                return generateError(res)
             })
     },
-    addNote: function(notebookId, passwordHash, note) {
+    addNote(notebookId, passwordHash, note) {
         let headers = new Headers()
         headers.append('Authorization', 'Basic ' + passwordHash)
         headers.append('Content-Type', 'application/json')
@@ -38,12 +54,10 @@ export default {
         return fetch(req)
             .then(res => {
                 if (res.status === 201) return res.json()
-                else if (res.status === 401) return 'unauthorized'
-                else if (res.status === 404) return 'not found'
-                else return null
+                return generateError(res)
             })
     },
-    updateNote: function(notebookId, passwordHash, note) {
+    updateNote(notebookId, passwordHash, note) {
         let headers = new Headers()
         headers.append('Authorization', 'Basic ' + passwordHash)
         headers.append('Content-Type', 'application/json')
@@ -56,7 +70,7 @@ export default {
                 else return null
             })
     },
-    deleteNote: function(notebookId, passwordHash, note) {
+    deleteNote(notebookId, passwordHash, note) {
         let headers = new Headers()
         headers.append('Authorization', 'Basic ' + passwordHash)
         headers.append('Content-Type', 'application/json')
@@ -68,18 +82,7 @@ export default {
                 else if (res.status === 404) return 'not found'
                 else return null
             })
-    },
-    updateNotebook: function(notebookId, passwordHash, settings) {
-        let headers = new Headers()
-        headers.append('Authorization', 'Basic ' + passwordHash)
-        headers.append('Content-Type', 'application/json')
-        let req = new Request(`${apiBaseUrl}/notebook/${notebookId}`, { method: 'PUT', body: JSON.stringify(settings), headers: headers })
-        return fetch(req)
-            .then(res => {
-                if (res.status === 200) return {}
-                else if (res.status === 401) return 'unauthorized'
-                else if (res.status === 404) return 'not found'
-                else return null
-            })
     }
 }
+
+export default api

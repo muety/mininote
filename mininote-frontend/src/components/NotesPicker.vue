@@ -25,9 +25,12 @@
 </template>
 
 <script>
+import { md5 } from '../lib/md5'
+import { mapState, mapGetters, mapMutations } from 'vuex'
+import { ApiError, UnauthorizedError, NotFoundError } from '../lib/errors'
+
 export default {
   name: 'notes-picker',
-  props: ['notes', 'selectedNoteId'],
   data() {
     return {
       query: '',
@@ -35,34 +38,56 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      notebook: state => state.notebook,
+      selectedNoteId: state => state.selectedNoteId
+    }),
+    ...mapGetters([
+      'notes'
+    ]),
     filteredNotes: function() {
-      let vm = this;
-      return this.query === '' ? this.notes : this.notes.filter(n => {
+      let filtered = this.query === '' ? [...this.notes] : this.notes.filter(n => {
         let pattern = new RegExp(this.query, 'gi')
         return pattern.test(n.title)
       })
+      return filtered.sort((el1, el2) => (el1.title < el2.title) ? -1 : (el1.title > el2.title) ? 1 : 0)
     }
   },
   methods: {
-    selectNote: function(noteId) {
-      this.$emit('noteSelected', noteId)
+    ...mapMutations([
+      'selectNote'
+    ]),
+    handleError: function(err) {
+      if (err instanceof UnauthorizedError) this.$emit('alert', 'You are not authorized to access this note. Password wrong?')
+      else if (err instanceof NotFoundError) this.$emit('alert', 'Resource not found')
+      else this.$emit('alert', 'An error has occured. Sorry.')
+      this.reset();
+    },
+    reset: function() {
+      vm.newNoteInput = ''
     },
     addNote: function() {
       if (!this.newNoteInput) return
+
       let note = {
-        id: this.notes.reduce((acc, n) => Math.max(acc, n.id), 0) + this.notes.length + 1,
+        id: this.notes.reduce((acc, n) => Math.max(acc, n.id), 0) + 1024 + 1,
         title: this.newNoteInput,
-        content: '',
-        isNew: true
+        content: ''
       }
-      this.$emit('addNote', note)
+
+      this.$store.commit('addChange', { type: 'add', payload: note })
+      this.$store.commit('selectNote', note.id)
       this.newNoteInput = ''
-      this.$emit('noteSelected', note.id)
     },
     deleteNote: function(note) {
-      this.$emit('deleteNote', note)
-      this.$emit('noteSelected', this.notes.reduce((acc, n) => n.id !== note.id ? Math.max(acc, n.id) : acc, 0))
+      this.$store.commit('addChange', { type: 'delete', payload: note })
+      if (this.selectedNoteId === note.id) {
+        this.$store.commit('selectFirst')
+      }
     }
+  },
+  created () {
+    this.$store.commit('selectFirst')
   }
 }
 </script>

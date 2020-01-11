@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import App from './App'
+import store from './store'
 
 Vue.use(BootstrapVue);
 
@@ -14,6 +15,7 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
     el: '#app',
+    store,
     template: '<App/>',
-    components: { App }
+    render: h => h(App)
 })

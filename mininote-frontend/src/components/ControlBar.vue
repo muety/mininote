@@ -1,15 +1,23 @@
 <template>
   <div>
-    <b-modal id="discardModal" ref="discardModalRef" title="Save changes?" @ok="discardChanges">You're about to discard all recent changes to your notebook. Are you sure you want to proceed?</b-modal>
+    <b-modal id="discardModal" ref="discardModalRef" title="Save changes?" @ok="reset">You're about to discard all recent changes to your notebook. Are you sure you want to proceed?</b-modal>
     <b-modal id="settingsModal" ref="settingsModalRef" size="lg" title="Notebook Settings" @ok="updateNotebook" ok-title="Save">
       <b-container fluid>
         <b-row>
-          <b-col sm="3"><label for="newNameInput">Name:</label></b-col>
-          <b-col><b-form-input id="newNameInput" type="text" placeholder="Enter new name for this notebook." v-model="notebook.id"/></b-col>
+          <b-col sm="3">
+            <label for="newNameInput">Name:</label>
+          </b-col>
+          <b-col>
+            <b-form-input id="newNameInput" type="text" placeholder="Enter new name for this notebook." v-model="inputs.newName" />
+          </b-col>
         </b-row>
-        <b-row>
-          <b-col sm="3"><label for="newPasswordInput">Password:</label></b-col>
-          <b-col><b-form-input id="newPasswordInput" type="password" placeholder="Enter new password for this notebook." v-model="notebook.password"/></b-col>
+        <b-row style="margin-top: 15px">
+          <b-col sm="3">
+            <label for="newPasswordInput">Password:</label>
+          </b-col>
+          <b-col>
+            <b-form-input id="newPasswordInput" type="password" placeholder="Enter new password for this notebook." v-model="inputs.newPassword" />
+          </b-col>
         </b-row>
       </b-container>
     </b-modal>
@@ -19,22 +27,22 @@
         <div class="col-4">
           <div class="input-group" id="notebook-chooser">
             <div class="input-group-btn">
-              <button type="button" class="btn btn-danger" @click="reset" :disabled="hasChanges">&#x2573;</button>
+              <button type="button" class="btn btn-danger" @click="close" :disabled="dirty">&#x2573;</button>
             </div>
-            <input type="text" class="form-control" placeholder="Open or create notebook ..." ref="refNotebookInput" v-model="notebookInput" v-if="!state.opening && !state.creating" :disabled="state.loaded" @keyup.enter="checkNotebookState" autofocus>
-            <input type="password" class="form-control" placeholder="Choose a password for the new notebook..." ref="refCreatePasswordInput" v-model="passwordInput" v-if="state.creating" @keyup.enter="createNotebook">
-            <input type="password" class="form-control" placeholder="Enter password ..." ref="refOpenPasswordInput" v-model="passwordInput" v-if="state.opening" @keyup.enter="openNotebook">
+            <input type="text" class="form-control" placeholder="Open or create notebook ..." ref="refNotebookInput" v-model="inputs.name" v-if="!state.opening && !state.creating" :disabled="state.loaded" @keyup.enter="tryNotebook" autofocus />
+            <input type="password" class="form-control" placeholder="Choose a password for the new notebook..." ref="refCreatePasswordInput" v-model="inputs.password" v-if="state.creating" @keyup.enter="createNotebook" />
+            <input type="password" class="form-control" placeholder="Enter password ..." ref="refOpenPasswordInput" v-model="inputs.password" v-if="state.opening" @keyup.enter="openNotebook" />
             <div class="input-group-btn">
-              <button type="button" class="btn btn-primary" :disabled="!notebookInput || state.loaded" @click="checkNotebookState" v-if="!state.opening && !state.creating">Open</button>
-              <button type="button" class="btn btn-primary" :disabled="!passwordInput" @click="openNotebook" v-if="state.opening">Open</button>
-              <button type="button" class="btn btn-primary" :disabled="!passwordInput" @click="createNotebook" v-if="state.creating">Create</button>
+              <button type="button" class="btn btn-primary" :disabled="!inputs.name || state.loaded" @click="tryNotebook" v-if="!state.opening && !state.creating">Open</button>
+              <button type="button" class="btn btn-primary" :disabled="!inputs.password" @click="openNotebook" v-if="state.opening">Open</button>
+              <button type="button" class="btn btn-primary" :disabled="!inputs.password" @click="createNotebook" v-if="state.creating">Create</button>
             </div>
           </div>
         </div>
         <div class="col-2"></div>
         <div class="col-2 action-buttons-container">
-          <button class="btn btn-primary float-right" @click="updateNotes" v-if="hasChanges">&#x1f4be;</button>
-          <button class="btn btn-primary float-right" @click="tryReset" v-if="hasChanges">&#x21ba;</button>
+          <button class="btn btn-primary float-right" @click="saveNotes" v-if="dirty">&#x1f4be;</button>
+          <button class="btn btn-primary float-right" @click="tryReset" v-if="dirty">&#x21ba;</button>
           <button class="btn btn-primary float-right" v-if="state.loaded" v-b-modal.settingsModal>&#x2699;</button>
         </div>
       </div>
@@ -43,62 +51,69 @@
 </template>
 
 <script>
-import NotesApiService from "./../services/NotesApiService";
-import { md5 } from "./../services/md5";
+import api from "../api";
+import { md5 } from "../lib/md5";
+import { mapState, mapGetters } from "vuex";
+import { ApiError, UnauthorizedError, NotFoundError } from "../lib/errors";
 
 export default {
   name: "control-bar",
-  props: ["hasChanges", "notes", "notesInitial"],
   data() {
     return {
-      notebookInput: "",
-      passwordInput: "",
-      passwordHash: "",
+      inputs: {
+        name: '',
+        password: '',
+        newName: '',
+        newPassword: ''
+      },
       state: {
         opening: false,
         creating: false,
         loaded: false
-      },
-      notebook: {
-        password: "",
-        name: ""
       }
     };
   },
   computed: {
-    notebookLoaded: function() {
-      return false;
-    }
+    ...mapState({
+      notebook: state => state.notebook
+    }),
+    ...mapGetters(["dirty"])
   },
   methods: {
+    handleError: function(err) {
+      if (err instanceof UnauthorizedError) this.$emit('alert', 'You are not authorized to access this note. Password wrong?')
+      else if (err instanceof NotFoundError) this.$emit('alert', 'Resource not found')
+      else this.$emit('alert', 'An error has occured. Sorry.')
+      this.reset();
+    },
     tryReset: function() {
-      if (!this.hasChanges) this.reset();
+      if (!this.dirty) this.reset();
       else this.$refs.discardModalRef.show();
     },
     reset: function() {
-      this.notebookInput = "";
-      this.passwordInput = "";
-      this.passwordHash = "";
-      this.id = "";
+      this.$store.commit('revertChanges');
+    },
+    close: function() {
+      this.inputs = {
+        name: '',
+        password: '',
+        newName: '',
+        newPassword: ''
+      };
       this.state = {
         opening: false,
         creating: false,
         loaded: false
       };
-      this.notebook = {
-        password: "",
-        id: ""
-      }
-      this.$emit("notesLoaded", null);
+      this.$store.commit('reset');
       setTimeout(() => this.$refs.refNotebookInput.focus(), 0);
     },
-    discardChanges: function() {
-      this.$emit("discardChanges", this.notes);
-    },
-    checkNotebookState: function() {
+    tryNotebook: function() {
       let vm = this;
-      if (!this.notebookInput) return;
-      NotesApiService.exists(this.notebookInput.toLowerCase())
+      if (!this.inputs.name) return;
+
+      api
+        .exists(this.inputs.name.toLowerCase())
         .then(exists => {
           if (exists) {
             vm.state.opening = true;
@@ -108,131 +123,58 @@ export default {
             setTimeout(() => vm.$refs.refCreatePasswordInput.focus(), 0);
           }
         })
-        .catch(() => {
-          vm.reset();
-          vm.$emit("alert", "An error has occured. Sorry.");
-        });
+        .catch(() => vm.handleError(null));
     },
     openNotebook: function() {
       let vm = this;
-      if (!this.notebookInput || !this.passwordInput) return;
-      NotesApiService.getNotes(
-        this.notebookInput.toLowerCase(),
-        md5(this.passwordInput)
-      )
-        .then(res => {
-          if (res && typeof res === "object") {
-            vm.state.opening = false;
-            vm.state.loaded = true;
-            vm.notebook.id = vm.notebookInput
-            vm.notebook.password = vm.passwordInput
-            vm.passwordHash = md5(vm.notebook.password)
-            vm.id = vm.notebook.id
-            vm.$emit("notesLoaded", res);
-          } else if (res && typeof res === "string" && res === "unauthorized") {
-            vm.$emit(
-              "alert",
-              "You are not authorized to access this note. Password wrong?"
-            );
-          } else {
-            vm.reset();
-            vm.$emit("alert", "An error has occured. Sorry.");
-          }
+      if (!this.inputs.name || !this.inputs.password) return;
+
+      this.$store
+        .dispatch('loadNotebook', {
+          id: this.inputs.name.toLowerCase(),
+          password: md5(this.inputs.password)
         })
-        .catch(() => {
-          vm.reset();
-          vm.$emit("alert", "An error has occured. Sorry.");
-        });
+        .then(res => {
+          vm.state.opening = false;
+          vm.state.loaded = true;
+          vm.$store.commit('selectFirst');
+
+          this.inputs.newName = this.inputs.name;
+          this.inputs.newPassword = this.inputs.password;
+        })
+        .catch(vm.handleError);
     },
     createNotebook: function() {
       let vm = this;
-      if (!this.notebookInput || !this.passwordInput) return;
-      NotesApiService.create(
-        this.notebookInput.toLowerCase(),
-        this.passwordHash
-      )
-        .then(res => {
-          if (res) {
-            vm.state.creating = false;
-            vm.state.loaded = true;
-            vm.$emit("notesLoaded", res.notes);
-          } else {
-            vm.reset();
-            vm.$emit("alert", "An error has occured. Sorry.");
-          }
+      if (!this.inputs.name || !this.inputs.password) return;
+
+      this.$store
+        .dispatch('createNotebook', {
+          id: this.inputs.name.toLowerCase(),
+          password: md5(this.inputs.password)
         })
-        .catch(() => {
-          vm.reset();
-          vm.$emit("alert", "An error has occured. Sorry.");
-        });
+        .then(res => {
+          vm.state.creating = false;
+          vm.state.loaded = true;
+        })
+        .catch(vm.handleError);
     },
-    updateNotes: function() {
+    saveNotes: function() {
       let vm = this;
+      if (!this.inputs.name || !this.inputs.password) return;
 
-      let promises = []
-
-      promises = promises.concat(this.notes
-        .filter(n => n.hasOwnProperty('isNew'))
-        .map(n => NotesApiService.addNote(this.notebookInput.toLowerCase(), this.passwordHash, n)))
-
-      promises = promises.concat(this.notes
-        .filter(n => !n.hasOwnProperty('isNew'))
-        .filter(n1 => this.notesInitial.find(n2 => n1.id === n2.id).content !== n1.content)
-        .map(n => NotesApiService.updateNote(this.notebookInput.toLowerCase(), this.passwordHash, n)))
-
-      promises = promises.concat(this.notesInitial
-        .filter(n1 => !this.notes.some(n2 => n1.id === n2.id))
-        .map(n => NotesApiService.deleteNote(this.notebookInput.toLowerCase(), this.passwordHash, n)))
-
-      Promise.all(promises)
-        .then(this.onNotesSaved)
-        .catch(() => {
-          vm.$emit("alert", "An error has occured. Sorry.");
-        });
+      this.$store.dispatch('applyChanges').catch(vm.handleError);
     },
     updateNotebook: function() {
-      let vm = this;
+      let vm = this
+      if (!this.inputs.name || !this.inputs.password) return;
 
-      let updatedNotebook = {}
-      if (this.notebook.id !== this.id) updatedNotebook.id = this.notebook.id
-      if (md5(this.notebook.password) !== this.passwordHash) updatedNotebook.password = md5(this.notebook.password);
-      
-      NotesApiService.updateNotebook(
-          this.notebookInput.toLowerCase(),
-          this.passwordHash,
-          updatedNotebook
-        )
-        .then(this.onNotebookSaved)
-        .catch(() => vm.$emit("alert", "An error has occured. Sorry."));
-    },
-    onNotesSaved: function(res) {
-      let vm = this;
-
-      if (!res || !Array.isArray(res) || res.some(r => r === null)) return vm.$emit("alert", "An error has occured. Sorry.");
-      if (res.some(r => r === 'unauthorized')) return vm.$emit("alert", "You are not authorized to access this note. Wrong password?");
-      if (res.some(r => r === 'not found')) return vm.$emit("alert", "Could not find requested resource.");
-
-      let newNotes = this.notes.filter(n => n.hasOwnProperty('isNew'))
-      let createdNotes = res.filter(r => r.hasOwnProperty('id'))
-
-      for (let i in newNotes) {
-        newNotes[i].id = createdNotes[i].id
-        delete newNotes[i].isNew
-      }
-
-      this.passwordHash = md5(this.notebook.password)
-
-      vm.$emit("alert", "Notebook saved successfully.", "success");
-      vm.$emit("notesLoaded", JSON.parse(JSON.stringify(this.notes)));
-    },
-    onNotebookSaved: function(res) {
-      let vm = this;
-
-      this.id = this.notebook.id
-      this.passwordHash = md5(this.notebook.password)
-      this.notebookInput = this.id
-
-      vm.$emit("alert", "Notebook saved successfully.", "success");
+      this.$store.dispatch('updateNotebook', { id: this.inputs.newName.toLowerCase(), password: md5(this.inputs.newPassword) })
+        .then(() => {
+          this.inputs.name = this.inputs.newName,
+          this.inputs.password = this.inputs.newPassword
+        })
+        .catch(vm.handleError)
     }
   }
 };
@@ -247,5 +189,4 @@ export default {
 #notebook-chooser input {
   border: 0;
 }
-
 </style>

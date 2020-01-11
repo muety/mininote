@@ -2,21 +2,21 @@
   <div id="app">
     <div class="logo">
       <span>✎ Mini_Note</span>
-      <span class="small">BETA</span>
+      <span class="small">BETA </span>
     </div>
     <div class="container-fluid">
       <b-alert show v-if="alert && alert.variant === 'danger'" variant="danger">{{ alert.text }}</b-alert>
       <b-alert show v-if="alert && alert.variant === 'success'" variant="success">{{ alert.text }}</b-alert>
-      <control-bar @alert="showAlert" :hasChanges="hasChanges" :notes="notes" :notesInitial="notesInitial" @notesLoaded="onNotesLoaded" @discardChanges="discardChanges"></control-bar>
-      <div class="row" v-if="notes">
+      <control-bar @alert="showAlert" :hasChanges="hasChanges"></control-bar>
+      <div class="row" v-if="loaded">
         <div class="col-2">
-          <notes-picker :notes="notes" :selectedNoteId="selectedNoteId" @noteSelected="onNoteSelected" @alert="showAlert" @addNote="addNote" @deleteNote="deleteNote"></notes-picker>
+          <notes-picker @noteSelected="onNoteSelected" @alert="showAlert" @addNote="addNote" @deleteNote="deleteNote"></notes-picker>
         </div>
-        <div class="col-10" v-if="selectedNote">
-          <notes-editor :showEditor="showEditor" :note="selectedNote" @alert="showAlert"></notes-editor>
+        <div class="col-10" v-if="selectedNoteId >= 0">
+          <notes-editor :content="currentContent" :id="selectedNoteId" :dirty="dirty" @alert="showAlert" @contentUpdate="onNoteUpdated"></notes-editor>
         </div>
       </div>
-      <div v-if="!notes">
+      <div v-if="!loaded">
         <div class="placeholder">
           <span>Please open an existing notebook or create a new one.</span>
         </div>
@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
+
 import NotesEditor from './components/NotesEditor'
 import NotesPicker from './components/NotesPicker'
 import ControlBar from './components/ControlBar'
@@ -38,25 +40,22 @@ export default {
   name: 'app',
   data() {
     return {
-			showEditor: true,
-			notes: null,
-      notesInitial: null,
-      selectedNoteId: 0,
       alert: null
     }
   },
   computed: {
-    selectedNote: function() {
-      return this.selectedNoteId > 0 ? this.notes.filter(n => n.id === this.selectedNoteId)[0] : null
-    },
+    ...mapState([
+      'selectedNoteId'
+    ]),
+    ...mapGetters([
+      'loaded',
+      'selectedNote',
+      'dirty',
+      'currentContent',
+      'noteById'
+    ]),
     hasChanges: function() {
-      if (!this.notes) return false
-      if (this.notes.length !== this.notesInitial.length) return true
-      let changed = false
-      for (let i = 0; i < this.notes.length; i++) {
-        if (this.notes[i].title !== this.notesInitial[i].title || this.notes[i].content !== this.notesInitial[i].content) changed = true
-      }
-      return changed
+      return false
     }
   },
   components: {
@@ -69,17 +68,9 @@ export default {
   },
   methods: {
     onNoteSelected: function(noteId) {
-      this.selectedNoteId = noteId
+      this.$store.commit('selectNote', noteId)
     },
     onNotesLoaded: function(notes) {
-      let isInitialLoad = !this.notesInitial
-      let selectedIdValid = notes ? notes.some(n => n.id === this.selectedNoteId) : true
-      
-      this.notes = notes
-      this.notesInitial = notes ? JSON.parse(JSON.stringify(notes)) : null
-
-      if (isInitialLoad) this.selectedNoteId = notes ? this.notes.reduce((acc, n) => Math.min(acc, n.id), Number.MAX_VALUE) : 0
-      else if (!selectedIdValid) this.selectedNoteId = this.notes.reduce((acc, n) => Math.max(acc, n.id), 0)
     },
     addNote: function(note) {
       this.notes.push(note)
@@ -98,7 +89,10 @@ export default {
         vm.alert = null
       }, 3000)
     },
-    didIntentToLeave: function(event){
+    onNoteUpdated: function({content, id}) {
+      this.$store.commit('addChange', { type: 'update', payload: { ...this.noteById(id), content }})
+    },
+    didIntentToLeave: function(event) {
       if(this.hasChanges){
         // Cancel the event as stated by the standard.
         event.preventDefault();

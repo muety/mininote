@@ -4,7 +4,7 @@
       <transition name="collapse">
         <div v-if="showEditor" class="col editor-container">
           <button class="btn btn-primary btn-editor" @click="toggleEditor()">◀</button>
-          <textarea :value="note.content" @input="onInput"></textarea>
+          <textarea :value="content" @input="onInput"></textarea>
         </div>
       </transition>
       <div class="col editor-container result-container">
@@ -18,27 +18,28 @@
 </template>
 
 <script>
-import { marked } from './../services/marked'
+import { marked } from '../lib/marked'
 
 let timeout = null;
 
 export default {
   name: 'notes-editor',
-  props: ['note'],
+  props: ['content', 'id', 'dirty'],
   data() {
     return {
       showEditor: true
     }
   },
   computed: {
-    textCompiled() { return marked(this.note.content) }
+    textCompiled() { return marked(this.content) }
   },
   methods: {
     onInput: function(e) {
       let vm = this
+      let id = this.id
       clearTimeout(timeout)
       timeout = setTimeout(function() {
-        vm.note.content = e.target.value
+        vm.$emit('contentUpdate', { content: e.target.value, id} )
       }, 500)
     },
     toggleEditor: function() {
