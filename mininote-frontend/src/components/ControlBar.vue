@@ -54,7 +54,6 @@
 import api from "../api";
 import { md5 } from "../lib/md5";
 import { mapState, mapGetters } from "vuex";
-import { ApiError, UnauthorizedError, NotFoundError } from "../lib/errors";
 
 export default {
   name: "control-bar",
@@ -81,9 +80,7 @@ export default {
   },
   methods: {
     handleError: function(err) {
-      if (err instanceof UnauthorizedError) this.$emit('alert', 'You are not authorized to access this note. Password wrong?')
-      else if (err instanceof NotFoundError) this.$emit('alert', 'Resource not found')
-      else this.$emit('alert', 'An error has occured. Sorry.')
+      this.$emit('alert', err.message)
       this.reset();
     },
     tryReset: function() {
@@ -163,7 +160,9 @@ export default {
       let vm = this;
       if (!this.inputs.name || !this.inputs.password) return;
 
-      this.$store.dispatch('applyChanges').catch(vm.handleError);
+      this.$store.dispatch('applyChanges')
+        .then(() => this.$emit('alert', 'Saved changes.', 'success'))
+        .catch(vm.handleError)
     },
     updateNotebook: function() {
       let vm = this
@@ -173,6 +172,7 @@ export default {
         .then(() => {
           this.inputs.name = this.inputs.newName,
           this.inputs.password = this.inputs.newPassword
+          this.$emit('alert', 'Notebook updated.', 'success')
         })
         .catch(vm.handleError)
     }

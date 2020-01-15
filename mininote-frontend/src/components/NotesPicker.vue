@@ -1,5 +1,17 @@
 <template>
   <div class="picker-container">
+    <b-modal id="renameModal" ref="renameModalRef" size="md" title="Rename Note" @ok="updateNote" ok-title="Save">
+      <b-container fluid>
+        <b-row>
+          <b-col sm="3">
+            <label for="newNameInput">Name:</label>
+          </b-col>
+          <b-col>
+            <b-form-input id="newNameInput" type="text" placeholder="Enter new name for this note." v-model="inputs.newName" />
+          </b-col>
+        </b-row>
+      </b-container>
+    </b-modal>
     <div class="search-container">
       <div class="input-group">
         <div class="input-group-prepend" id="sizing-addon1">
@@ -13,6 +25,7 @@
       <li v-for="n in filteredNotes" :key="n.id" class="list-group-item" :class="{ active: selectedNoteId == n.id }" @click="selectNote(n.id)">
         {{ n.title }}
         <span class="delete-btn" @click.stop="deleteNote(n)">🗑</span>
+        <span class="rename-btn" v-b-modal.renameModal>✏️</span>
       </li>
     </ul>
     <div class="input-group new-note-input">
@@ -27,14 +40,16 @@
 <script>
 import { md5 } from '../lib/md5'
 import { mapState, mapGetters, mapMutations } from 'vuex'
-import { ApiError, UnauthorizedError, NotFoundError } from '../lib/errors'
 
 export default {
   name: 'notes-picker',
   data() {
     return {
       query: '',
-      newNoteInput: ''
+      newNoteInput: '',
+      inputs: {
+        newName: ''
+      }
     }
   },
   computed: {
@@ -43,7 +58,7 @@ export default {
       selectedNoteId: state => state.selectedNoteId
     }),
     ...mapGetters([
-      'notes'
+      'notes', 'currentTitle', 'selectedNote'
     ]),
     filteredNotes: function() {
       let filtered = this.query === '' ? [...this.notes] : this.notes.filter(n => {
@@ -51,16 +66,14 @@ export default {
         return pattern.test(n.title)
       })
       return filtered.sort((el1, el2) => (el1.title < el2.title) ? -1 : (el1.title > el2.title) ? 1 : 0)
-    }
+    },
   },
   methods: {
     ...mapMutations([
       'selectNote'
     ]),
     handleError: function(err) {
-      if (err instanceof UnauthorizedError) this.$emit('alert', 'You are not authorized to access this note. Password wrong?')
-      else if (err instanceof NotFoundError) this.$emit('alert', 'Resource not found')
-      else this.$emit('alert', 'An error has occured. Sorry.')
+      this.$emit('alert', err.message)
       this.reset();
     },
     reset: function() {
@@ -79,6 +92,11 @@ export default {
       this.$store.commit('selectNote', note.id)
       this.newNoteInput = ''
     },
+    updateNote: function(note) {
+      this.$store.dispatch('updateNote', { ...this.selectedNote, title: this.inputs.newName })
+        .then(() => this.$emit('alert', 'Note saved.', 'success'))
+        .catch(this.handleError)
+    },
     deleteNote: function(note) {
       this.$store.commit('addChange', { type: 'delete', payload: note })
       if (this.selectedNoteId === note.id) {
@@ -88,6 +106,11 @@ export default {
   },
   created () {
     this.$store.commit('selectFirst')
+  },
+  watch: {
+    'selectedNoteId': function () {
+      this.inputs.newName = this.currentTitle
+    }
   }
 }
 </script>
@@ -110,6 +133,11 @@ export default {
 
 .picker-container li .delete-btn {
   float: right;
+}
+
+.picker-container li .rename-btn {
+  float: right;
+  margin-right: 10px;
 }
 
 .picker-container .search-container {

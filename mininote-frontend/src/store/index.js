@@ -47,6 +47,13 @@ function currentContent(state) {
     return selectedNote(state).content
 }
 
+function currentTitle(state) {
+    let id = state.selectedNoteId
+    if (id < 0) return ''
+    if (state.changes.update.hasOwnProperty(id)) return state.changes.update[id].title
+    return selectedNote(state).title
+}
+
 /// MUTATIONS ///
 function selectNote(state, id) {
     if (id < 0) return null
@@ -70,6 +77,7 @@ const store = new Vuex.Store({
         dirty,
         notes: resolveNotes,
         currentContent,
+        currentTitle,
         loaded,
         noteById
     },
@@ -161,7 +169,9 @@ const store = new Vuex.Store({
                 .then(() => commit('setNotebook', { id, password }))
         },
         updateNotebook({ state, commit }, notebook) {
-            return api.update(state.notebook.id, state.notebook.password, notebook)
+            let updateNotebook = JSON.parse(JSON.stringify(notebook))
+            if (notebook.id === state.notebook.id) delete updateNotebook.id
+            return api.update(state.notebook.id, state.notebook.password, updateNotebook)
                 .then(() => commit('setNotebook', notebook))
         },
         createNote({ state, commit }, note) {

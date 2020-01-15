@@ -1,11 +1,9 @@
-import { ApiError, NotFoundError, UnauthorizedError } from '../lib/errors'
-
 const apiBaseUrl = 'http://localhost:3000/api'
 
 function generateError(res) {
-    if (res.status === 401) return new UnauthorizedError()
-    if (res.status === 404) return new NotFoundError()
-    return new ApiError()
+    if (res.status === 401) return new Error('You are not authorized to access this note. Password wrong?')
+    if (res.status === 404) return new Error('Resource not found')
+    return new Error('An error has occurred, sorry.')
 }
 
 const api = {
@@ -20,7 +18,7 @@ const api = {
         return fetch(req)
             .then(res => {
                 if (res.status === 201) return res.json()
-                return generateError(res)
+                throw generateError(res)
             })
     },
     update(notebookId, passwordHash, notebook) {
@@ -31,9 +29,7 @@ const api = {
         return fetch(req)
             .then(res => {
                 if (res.status === 200) return {}
-                else if (res.status === 401) return 'unauthorized'
-                else if (res.status === 404) return 'not found'
-                else return null
+                throw generateError(res)
             })
     },
     getNotes(notebookId, passwordHash) {
@@ -43,7 +39,7 @@ const api = {
         return fetch(req)
             .then(res => {
                 if (res.status === 200) return res.json()
-                return generateError(res)
+                throw generateError(res)
             })
     },
     addNote(notebookId, passwordHash, note) {
@@ -54,7 +50,7 @@ const api = {
         return fetch(req)
             .then(res => {
                 if (res.status === 201) return res.json()
-                return generateError(res)
+                throw generateError(res)
             })
     },
     updateNote(notebookId, passwordHash, note) {
@@ -65,9 +61,7 @@ const api = {
         return fetch(req)
             .then(res => {
                 if (res.status === 200) return {}
-                else if (res.status === 401) return 'unauthorized'
-                else if (res.status === 404) return 'not found'
-                else return null
+                throw generateError(res)
             })
     },
     deleteNote(notebookId, passwordHash, note) {
@@ -78,9 +72,7 @@ const api = {
         return fetch(req)
             .then(res => {
                 if (res.status === 200) return {}
-                else if (res.status === 401) return 'unauthorized'
-                else if (res.status === 404) return 'not found'
-                else return null
+                throw generateError(res)
             })
     }
 }
