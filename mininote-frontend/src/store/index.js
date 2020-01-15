@@ -12,7 +12,8 @@ const emptyState = {
         delete: [],
         update: {}
     },
-    selectedNoteId: -1
+    selectedNoteId: -1,
+    version: require('../../package.json').version
 }
 
 /// GETTERS ///

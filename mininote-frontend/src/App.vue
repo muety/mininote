@@ -22,7 +22,8 @@
         </div>
       </div>
     </div>
-    <div class="footer">Made w/ &#x2661; by
+    <div class="footer">Version {{ version }} | 
+      Made w/ &#x2661; by
       <a href="http://ferdinand-muetsch.de">Ferdinand Mütsch</a> |
       <a href="http://github.com/n1try/mininote">GitHub</a>
     </div>
@@ -45,7 +46,8 @@ export default {
   },
   computed: {
     ...mapState([
-      'selectedNoteId'
+      'selectedNoteId',
+      'version'
     ]),
     ...mapGetters([
       'loaded',
