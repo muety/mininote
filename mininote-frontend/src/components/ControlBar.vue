@@ -53,7 +53,7 @@
 <script>
 import api from "../api";
 import { md5 } from "../lib/md5";
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
   name: "control-bar",
@@ -74,11 +74,13 @@ export default {
   },
   computed: {
     ...mapState({
-      notebook: state => state.notebook
+      notebook: state => state.notebook,
+      loadNotebookId: state => state.loadNotebookId
     }),
     ...mapGetters(["dirty"])
   },
   methods: {
+    ...mapActions(['listNotebooks']),
     handleError: function(err) {
       this.$emit('alert', err.message)
       this.reset();
@@ -102,7 +104,8 @@ export default {
         creating: false,
         loaded: false
       };
-      this.$store.commit('reset');
+      this.$store.commit('reset')
+      this.listNotebooks()
       setTimeout(() => this.$refs.refNotebookInput.focus(), 0);
     },
     tryNotebook: function() {
@@ -175,6 +178,13 @@ export default {
           this.$emit('alert', 'Notebook updated.', 'success')
         })
         .catch(vm.handleError)
+    }
+  },
+  watch: {
+    loadNotebookId: function(newId, oldId) {
+      if (newId !== '' && newId !== oldId) {
+        this.inputs.name = newId
+      }
     }
   }
 };

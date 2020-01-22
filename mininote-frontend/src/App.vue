@@ -16,9 +16,15 @@
           <notes-editor :content="currentContent" :id="selectedNoteId" :dirty="dirty" @alert="showAlert" @contentUpdate="onNoteUpdated"></notes-editor>
         </div>
       </div>
-      <div v-if="!loaded">
+      <div v-if="!loaded && !notebooks.length">
         <div class="placeholder">
-          <span>Please open an existing notebook or create a new one.</span>
+          <span>Please create a new notebook.</span>
+        </div>
+      </div>
+      <div v-if="!loaded && notebooks.length">
+        <div class="notebooks-picker-container">
+          <h3>Your Notebooks</h3>
+          <notebooks-picker :notebooks="notebooks" @notebookSelected="onNotebookSelected"></notebooks-picker>
         </div>
       </div>
     </div>
@@ -31,10 +37,11 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 
 import NotesEditor from './components/NotesEditor'
 import NotesPicker from './components/NotesPicker'
+import NotebooksPicker from './components/NotebooksPicker'
 import ControlBar from './components/ControlBar'
 
 export default {
@@ -47,7 +54,8 @@ export default {
   computed: {
     ...mapState([
       'selectedNoteId',
-      'version'
+      'version',
+      'notebooks'
     ]),
     ...mapGetters([
       'loaded',
@@ -63,16 +71,22 @@ export default {
   components: {
     NotesEditor,
     NotesPicker,
+    NotebooksPicker,
     ControlBar
   },
   created() {
-    window.addEventListener("beforeunload", this.didIntentToLeave);
+    window.addEventListener("beforeunload", this.didIntentToLeave)
+    this.listNotebooks()
   },
   methods: {
+    ...mapActions([
+      'listNotebooks'
+    ]),
     onNoteSelected: function(noteId) {
       this.$store.commit('selectNote', noteId)
     },
-    onNotesLoaded: function(notes) {
+    onNotebookSelected: function(notebookId) {
+      this.$store.commit('setLoadNotebook', notebookId)
     },
     addNote: function(note) {
       this.notes.push(note)
@@ -159,6 +173,13 @@ button {
   left: calc(50% - 300px);
 }
 
+#app .notebooks-picker-container {
+  position: absolute;
+  width: 500px;
+  top: 20vh;
+  left: calc(50% - 250px);
+}
+
 .alert {
   width: 500px;
   position: fixed;
@@ -166,5 +187,10 @@ button {
   left: calc(50% - 250px);
   z-index: 999;
   text-align: center;
+}
+
+#app h3 {
+  font-size: 20px;
+  color: #42B983;
 }
 </style>

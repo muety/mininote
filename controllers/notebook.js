@@ -25,6 +25,12 @@ exports.exist = (req, res) => {
     return res.status(200).end()
 }
 
+exports.list = (req, res) => {
+    let list = notebooks.find().map(n => Object.assign({}, { id: n.id, count: n.notes.length }))
+    list.sort((a, b) => a.id - b.id)
+    return res.status(200).send(list)
+}
+
 exports.create = (req, res) => {
     if (!req.body || !req.body.id || !req.body.password) return res.status(400).end()
     if (notebooks.findOne({ id: req.body.id })) return res.status(409).end()

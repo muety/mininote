@@ -4,6 +4,8 @@ const express = require('express'),
     router = express.Router(),
     notebookController = require('../controllers/notebook')
 
+router.get('/notebook', notebookController.list)
+
 router.post('/notebook', notebookController.create)
 
 router.head('/notebook/:id', notebookController.exist)

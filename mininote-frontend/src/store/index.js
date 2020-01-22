@@ -7,12 +7,14 @@ Vue.use(Vuex)
 
 const emptyState = {
     notebook: {},
+    notebooks: [],
     changes: {
         add: [],
         delete: [],
         update: {}
     },
     selectedNoteId: -1,
+    loadNotebookId: '',
     version: require('../../package.json').version
 }
 
@@ -83,6 +85,9 @@ const store = new Vuex.Store({
         noteById
     },
     mutations: {
+        setNotebooks(state, notebookList) {
+            Vue.set(state, 'notebooks', notebookList)
+        },
         setNotebook(state, { id, password }) {
             Vue.set(state.notebook, 'id', id)
             Vue.set(state.notebook, 'password', password)
@@ -109,6 +114,9 @@ const store = new Vuex.Store({
         },
         selectNote,
         selectFirst,
+        setLoadNotebook(state, id) {
+            Vue.set(state, 'loadNotebookId', id)
+        },
         addChange(state, { type, payload }) {
             switch (type) {
                 case 'add':
@@ -159,6 +167,10 @@ const store = new Vuex.Store({
         }
     },
     actions: {
+        listNotebooks({ commit }) {
+            return api.list()
+                .then(data => commit('setNotebooks', data))
+        },
         loadNotebook({ commit }, { id, password }) {
             return api.getNotes(id, password)
                 .then(data => commit('setNotes', data))

@@ -11,6 +11,14 @@ const api = {
         let req = new Request(`${apiBaseUrl}/notebook/${notebookId}`, { method: 'HEAD' })
         return fetch(req).then(res => res.status === 200)
     },
+    list() {
+        let req = new Request(`${apiBaseUrl}/notebook`, { method: 'GET' })
+        return fetch(req)
+            .then(res => {
+                if (res.status === 200) return res.json()
+                throw generateError(res)
+            })
+    },
     create(notebookId, passwordHash) {
         let headers = new Headers()
         headers.append('Content-Type', 'application/json')
