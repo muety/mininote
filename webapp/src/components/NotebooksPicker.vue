@@ -10,8 +10,6 @@
 </template>
 
 <script>
-import { md5 } from '../lib/md5'
-import { mapState, mapGetters, mapMutations } from 'vuex'
 
 export default {
   name: 'notes-picker',

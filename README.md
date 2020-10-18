@@ -1,8 +1,10 @@
 # MiniNote
-![GitHub package.json version](https://img.shields.io/github/package-json/v/muety/mininote?style=flat-square)
-[![](http://img.shields.io/liberapay/receives/muety.svg?logo=liberapay&style=flat-square)](https://liberapay.com/muety/)
-[![Say thanks](https://img.shields.io/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg?style=flat-square)](https://saythanks.io/to/n1try)
-![](https://img.shields.io/github/license/muety/mininote?style=flat-square)
+![GitHub package.json version](https://badges.fw-web.space/github/package-json/v/muety/mininote?style=flat-square)
+![](https://badges.fw-web.space/github/license/muety/mininote?style=flat-square)
+![GitHub code size in bytes](https://badges.fw-web.space/github/languages/code-size/muety/mininote?style=flat-square)
+![GitHub last commit](https://badges.fw-web.space/github/last-commit/muety/mininote)
+[![](https://badges.fw-web.space/liberapay/receives/muety.svg?logo=liberapay&style=flat-square)](https://liberapay.com/muety/)
+[![Say thanks](https://badges.fw-web.space/badge/SayThanks.io-%E2%98%BC-1EAEDB.svg?style=flat-square)](https://saythanks.io/to/n1try)
 
 [![Buy me a coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoff.ee/n1try)
 
@@ -12,21 +14,20 @@ A simple, self-hosted Markdown note-taking app built with [VueJS](https://vuejs.
 
 ![](https://i.imgur.com/Y9TFu6w.png)
 
-[![Buy me a coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoff.ee/n1try)
 
 ## Requirements
-* NodeJS >= 10.13.x
+* NodeJS >= `12.19.0 LTS`
 
 ## How to run?
-1. `git clone https://github.com/n1try/mininote`
-2. In root directory: `npm install`
-3. And again in _mininote-frontend_ directory: `npm install`
+1. `git clone https://github.com/muety/mininote`
+2. In root directory: `yarn`
+3. And again in _webapp_ directory: `yarn`
 4. Adapt `config.js` to your needs (e.g. set web server port)
-5. In _mininote-frontend_ directory: `npm run build`
-6. In root directory: `npm start`
+5. In _webapp_ directory: `yarn build`
+6. In root directory: `yarn start`
 
 ## How to run with Docker?
-1. `git clone https://github.com/n1try/mininote`
+1. `git clone https://github.com/muety/mininote`
 2. `docker build -t mininote .`
 3. `docker run -d -p 3000:3000 -v /your-dir-of-choice:/app/data mininote`
 --> MiniNote will listen on port 3000 and persist data to `/your-dir-of-choice` on your host system using a shared volume.

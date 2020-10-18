@@ -18,4 +18,4 @@ new Vue({
     store,
     template: '<App/>',
     render: h => h(App)
-})
+}) 

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { marked } from '../lib/marked'
+import marked from '../lib/marked'
 
 let timeout = null;
 
@@ -31,7 +31,7 @@ export default {
     }
   },
   computed: {
-    textCompiled() { return marked(this.content) }
+    textCompiled() { return marked.parse(this.content) }
   },
   methods: {
     onInput: function(e) {

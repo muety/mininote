@@ -1,6 +1,6 @@
 {
     "name": "mininote",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "description": "A simple Mardown note-taking editor",
     "main": "index.js",
     "scripts": {
@@ -10,14 +10,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/n1try/mininote.git"
+        "url": "git+https://github.com/muety/mininote.git"
     },
     "author": "Ferdinand Mütsch <mail@ferdinand-muetsch.de>",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/n1try/mininote/issues"
+        "url": "https://github.com/muety/mininote/issues"
     },
-    "homepage": "https://github.com/n1try/mininote#readme",
+    "homepage": "https://github.com/muety/mininote#readme",
     "dependencies": {
         "body-parser": "^1.18.2",
         "cors": "^2.8.4",
@@ -30,6 +30,6 @@
         "supertest": "^3.3.0"
     },
     "engines": {
-        "node": ">=10.13.0"
+        "node": ">=12.0.0"
     }
 }

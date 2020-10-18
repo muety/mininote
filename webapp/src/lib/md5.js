@@ -1,5 +1,7 @@
 /* http://www.myersdaily.org/joseph/javascript/md5.js */
 
+/* eslint-disable */
+
 function md5cycle(x, k) {
     var a = x[0],
         b = x[1],
@@ -191,3 +193,5 @@ if (md5('hello') != '5d41402abc4b2a76b9719d911017c592') {
 }
 
 export { md5 }
+
+/* eslint-enable */

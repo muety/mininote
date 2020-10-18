@@ -4,7 +4,9 @@
  * https://github.com/markedjs/marked
  */
 
-;(function(root) {
+/* eslint-disable */
+
+(function(root) {
     'use strict';
     
     /**
@@ -1539,3 +1541,4 @@
     }
     })(this || (typeof window !== 'undefined' ? window : global));
     
+/* eslint-enable */

@@ -30,8 +30,8 @@
     </div>
     <div class="footer">Version {{ version }} | 
       Made w/ &#x2661; by
-      <a href="http://ferdinand-muetsch.de">Ferdinand Mütsch</a> |
-      <a href="http://github.com/n1try/mininote">GitHub</a>
+      <a href="https://muetsch.io">Ferdinand Mütsch</a> |
+      <a href="https://github.com/muety/mininote">GitHub</a>
     </div>
   </div>
 </template>
@@ -121,6 +121,11 @@ export default {
 </script>
 
 <style>
+body {
+  background-color: #1B2836;
+  margin: 20px 0;
+}
+
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -144,6 +149,7 @@ export default {
 #app .logo .small {
   color: #42B983;
   font-size: 12px;
+  margin-left: 5px;
 }
 
 #app .footer {
@@ -158,9 +164,14 @@ button {
   cursor: pointer;
 }
 
-#app .btn-primary {
+.btn-primary, #app .btn-primary  {
   background-color: #42B983;
   border-color: #42B983;
+}
+
+.btn-primary:hover, #app .btn-primary:hover  {
+  background-color: #2b9565;
+  border-color: #2b9565;
 }
 
 #app .placeholder {
@@ -192,5 +203,15 @@ button {
 #app h3 {
   font-size: 20px;
   color: #42B983;
+}
+
+.no-rounded-right {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.no-rounded-left {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 </style>

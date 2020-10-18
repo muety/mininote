@@ -1,0 +1,25 @@
+# Configuration to serve built frontend with staging backend using Caddy 2 web file_server
+# Run: caddy run -config Caddyfile-dev
+# https://caddyserver.com/download
+
+http://localhost:8080 {
+    @m1 {
+        not path /api*
+    }
+
+    @m2 {
+        path /api*
+    }
+
+    root @m1 ./dist
+
+    try_files {path} {path}/ /index.html
+
+    file_server
+
+    route @m2 {
+        reverse_proxy http://localhost:3000 {
+            header_up Host localhost:3000
+        }
+    }
+}

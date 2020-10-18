@@ -1,6 +1,6 @@
-FROM node:6-alpine
+FROM node:12-alpine
 
-MAINTAINER Ferdinand Mütsch <mail@ferdinand-muetsch.de>
+MAINTAINER Ferdinand Mütsch <ferdinand@muetsch.io>
 
 WORKDIR /app
 
@@ -10,11 +10,11 @@ COPY . /app/
 
 VOLUME ["/app/data"]
 
-RUN cd /app && npm install
+RUN cd /app && yarn
 
-RUN cd /app/mininote-frontend && \
-    npm install && \
-    npm run build && \
+RUN cd /app/webapp && \
+    yarn && \
+    yarn build && \
     cd ..
 
-ENTRYPOINT npm start
+ENTRYPOINT yarn start

@@ -31,14 +31,13 @@
     <div class="input-group new-note-input">
       <input type="text" class="form-control" placeholder="Add note ..." v-model="newNoteInput" @keyup.enter="addNote">
       <div class="input-group-btn">
-        <button type="button" class="btn btn-primary" :disabled="!newNoteInput" @click="addNote">&#x2b;</button>
+        <button type="button" class="btn btn-primary no-rounded-left" :disabled="!newNoteInput" @click="addNote">&#x2b;</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { md5 } from '../lib/md5'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 
 export default {
@@ -77,7 +76,7 @@ export default {
       this.reset();
     },
     reset: function() {
-      vm.newNoteInput = ''
+      this.newNoteInput = ''
     },
     addNote: function() {
       if (!this.newNoteInput) return
@@ -92,7 +91,7 @@ export default {
       this.$store.commit('selectNote', note.id)
       this.newNoteInput = ''
     },
-    updateNote: function(note) {
+    updateNote: function() {
       this.$store.dispatch('updateNote', { ...this.selectedNote, title: this.inputs.newName })
         .then(() => this.$emit('alert', 'Note saved.', 'success'))
         .catch(this.handleError)

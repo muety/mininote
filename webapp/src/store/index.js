@@ -5,6 +5,8 @@ import api from '../api'
 
 Vue.use(Vuex)
 
+/* eslint-disable no-case-declarations */
+
 const emptyState = {
     notebook: {},
     notebooks: [],
@@ -20,7 +22,7 @@ const emptyState = {
 
 /// GETTERS ///
 function loaded(state) {
-    return state.notebook.hasOwnProperty('notes')
+    return !!state.notebook.notes
 }
 
 function dirty(state) {
@@ -46,14 +48,14 @@ function resolveNotes(state) {
 function currentContent(state) {
     let id = state.selectedNoteId
     if (id < 0) return ''
-    if (state.changes.update.hasOwnProperty(id)) return state.changes.update[id].content
+    if (id in state.changes.update) return state.changes.update[id].content
     return selectedNote(state).content
 }
 
 function currentTitle(state) {
     let id = state.selectedNoteId
     if (id < 0) return ''
-    if (state.changes.update.hasOwnProperty(id)) return state.changes.update[id].title
+    if (id in state.changes.update) return state.changes.update[id].title
     return selectedNote(state).title
 }
 
@@ -124,8 +126,8 @@ const store = new Vuex.Store({
                     Vue.set(state.changes, type, state.changes[type].concat([payload]))
                     break
                 case 'update':
-                    let hasChange = state.changes.update.hasOwnProperty(payload.id)
-                    let originalNote = (state.notebook.notes || []).find(n => n.id === payload.id)
+                    const hasChange = payload.id in state.changes.update
+                    const originalNote = (state.notebook.notes || []).find(n => n.id === payload.id)
 
                     if (originalNote && originalNote.content === payload.content && hasChange) {
                         Vue.delete(state.changes.update, payload.id)
@@ -139,7 +141,7 @@ const store = new Vuex.Store({
             switch (type) {
                 case 'add':
                 case 'delete':
-                    let idx = state.changes[type].findIndex(n => n.id === payload.id)
+                    const idx = state.changes[type].findIndex(n => n.id === payload.id)
                     Vue.delete(state.changes[type], idx)
                     break
                 case 'update':

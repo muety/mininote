@@ -27,15 +27,15 @@
         <div class="col-4">
           <div class="input-group" id="notebook-chooser">
             <div class="input-group-btn">
-              <button type="button" class="btn btn-danger" @click="close" :disabled="dirty">&#x2573;</button>
+              <button type="button" class="btn btn-danger no-rounded-right" @click="close" :disabled="dirty">&#x2573;</button>
             </div>
             <input type="text" class="form-control" placeholder="Open or create notebook ..." ref="refNotebookInput" v-model="inputs.name" v-if="!state.opening && !state.creating" :disabled="state.loaded" @keyup.enter="tryNotebook" autofocus />
             <input type="password" class="form-control" placeholder="Choose a password for the new notebook..." ref="refCreatePasswordInput" v-model="inputs.password" v-if="state.creating" @keyup.enter="createNotebook" />
             <input type="password" class="form-control" placeholder="Enter password ..." ref="refOpenPasswordInput" v-model="inputs.password" v-if="state.opening" @keyup.enter="openNotebook" />
             <div class="input-group-btn">
-              <button type="button" class="btn btn-primary" :disabled="!inputs.name || state.loaded" @click="tryNotebook" v-if="!state.opening && !state.creating">Open</button>
-              <button type="button" class="btn btn-primary" :disabled="!inputs.password" @click="openNotebook" v-if="state.opening">Open</button>
-              <button type="button" class="btn btn-primary" :disabled="!inputs.password" @click="createNotebook" v-if="state.creating">Create</button>
+              <button type="button" class="btn btn-primary no-rounded-left" :disabled="!inputs.name || state.loaded" @click="tryNotebook" v-if="!state.opening && !state.creating">Open</button>
+              <button type="button" class="btn btn-primary no-rounded-left" :disabled="!inputs.password" @click="openNotebook" v-if="state.opening">Open</button>
+              <button type="button" class="btn btn-primary no-rounded-left" :disabled="!inputs.password" @click="createNotebook" v-if="state.creating">Create</button>
             </div>
           </div>
         </div>
@@ -134,7 +134,7 @@ export default {
           id: this.inputs.name.toLowerCase(),
           password: md5(this.inputs.password)
         })
-        .then(res => {
+        .then(() => {
           vm.state.opening = false;
           vm.state.loaded = true;
           vm.$store.commit('selectFirst');
@@ -153,7 +153,7 @@ export default {
           id: this.inputs.name.toLowerCase(),
           password: md5(this.inputs.password)
         })
-        .then(res => {
+        .then(() => {
           vm.state.creating = false;
           vm.state.loaded = true;
         })
@@ -187,7 +187,7 @@ export default {
       }
     }
   }
-};
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -199,4 +199,5 @@ export default {
 #notebook-chooser input {
   border: 0;
 }
+
 </style>
