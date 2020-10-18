@@ -40,7 +40,7 @@ $ yarn start
 $ docker volume create mininote data
 
 # Run the container
-$ docker run -d -p 3000:3000 -v mininote-data:/app/data --name mininote mininote
+$ docker run -d -p 3000:3000 -v mininote-data:/app/data --name mininote n1try/mininote
 ```
 
 ## 🔒 Use HTTPS for backend
