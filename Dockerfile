@@ -4,7 +4,8 @@ MAINTAINER Ferdinand Mütsch <ferdinand@muetsch.io>
 
 WORKDIR /app
 
-ENV MININOTE_PORT 3000
+ARG base_url=/
+ENV BASE_URL $base_url
 
 COPY . /app/
 
