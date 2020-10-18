@@ -11,7 +11,7 @@ const config = require('./config'),
 
 let server
 
-app.use(express.static('public'))
+app.use(express.static('webapp/dist'))
 app.use(bodyParser.json())
 
 if (debug) app.use(cors())
