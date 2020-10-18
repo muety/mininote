@@ -1,4 +1,4 @@
-const apiBaseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000/api' : '/api'
+const apiBaseUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000/api' : 'api'
 
 function generateError(res) {
     if (res.status === 401) return new Error('You are not authorized to access this note. Password wrong?')
