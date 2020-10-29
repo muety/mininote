@@ -1,47 +1,32 @@
 <template>
-  <div class="picker-container">
-    <b-list-group>
-      <b-list-group-item button v-for="n in notebooks" :key="n.id" @click="chooseNotebook(n.id)" class="d-flex justify-content-between align-items-center">
-        {{ n.id }}
-        <b-badge variant="primary" pill>{{ n.count }}</b-badge>
-      </b-list-group-item>
-    </b-list-group>
+  <div class="flex flex-col">
+    <button
+      v-for="n in notebooks"
+      :key="n.id"
+      @click="chooseNotebook(n.id)"
+      class="flex justify-between px-4 text-gray-700 bg-gray-100 border-b border-gray-400 rounded-none first:rounded-t-md last:rounded-b-md hover:bg-gray-300 last:border-none"
+    >
+      {{ n.id }}
+      <div
+        class="flex items-center px-3 py-0 text-xs font-semibold text-gray-100 bg-green-600 rounded-l-xl rounded-r-xl"
+      >{{ n.count }}</div>
+    </button>
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'notes-picker',
-  props: ['notebooks'],
+  name: "notes-picker",
+  props: ["notebooks"],
   computed: {},
   methods: {
     chooseNotebook: function(id) {
-      this.$emit('notebookSelected', id)
+      this.$emit("notebookSelected", id);
     }
   },
-  created () {
-  }
-}
+  created() {}
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.picker-container {
-  margin-top: 20px;
-}
-
-.picker-container ul {
-  overflow-y: auto;
-  max-height: calc(100vh - 240px)
-}
-
-.picker-container .badge-primary {
-  background-color: #42B983;
-}
-
-.picker-container .list-group-item {
-  padding: 0.35rem 0.75rem;
-  cursor: pointer;
-}
 </style>

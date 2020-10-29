@@ -1,0 +1,33 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+body {
+    @apply mx-6 my-4 text-gray-700 bg-gray-900;
+}
+
+button {
+    @apply p-2 rounded-md;
+}
+
+.btn-primary {
+    @apply text-gray-100 bg-green-600;
+}
+
+.btn-danger {
+    @apply text-gray-100 bg-red-700;
+}
+
+input {
+    @apply p-2 border-none rounded-md;
+}
+
+h3 {
+    @apply mb-4 text-xl text-green-600;
+}
+
+a {
+    @apply text-green-500;
+}

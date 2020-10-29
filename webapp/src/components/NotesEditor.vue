@@ -1,118 +1,88 @@
 <template>
-  <div class="container-fluid">
-    <div class="row">
-      <transition name="collapse">
-        <div v-if="showEditor" class="col editor-container">
-          <button class="btn btn-primary btn-editor" @click="toggleEditor()">◀</button>
-          <textarea :value="content" @input="onInput"></textarea>
-        </div>
-      </transition>
-      <div class="col editor-container result-container">
-        <transition name="fade">
-          <button class="btn btn-primary btn-results" @click="toggleEditor()" v-if="!showEditor">▶</button>
-        </transition>
-        <div class="text-compiled" v-html="textCompiled"></div>
+  <div class="flex space-x-4">
+    <div v-if="showEditor" class="flex flex-grow w-1/2 pt-1 pb-1 pl-1 bg-gray-100 rounded-md">
+      <textarea
+        :value="content"
+        @input="onInput"
+        class="flex-grow px-4 py-3 bg-gray-100 resize-none"
+      ></textarea>
+      <div class="flex items-center">
+        <button class="p-1 rounded-r-none btn-primary btn-editor" @click="toggleEditor()">◀</button>
       </div>
+    </div>
+    <div class="flex flex-grow w-1/2 bg-gray-100 rounded-md">
+      <div class="flex items-center">
+        <button
+          class="p-1 rounded-l-none btn-primary btn-editor"
+          @click="toggleEditor()"
+          v-if="!showEditor"
+        >▶</button>
+      </div>
+      <div class="flex-grow px-4 py-3 text-compiled" v-html="textCompiled"></div>
     </div>
   </div>
 </template>
 
 <script>
-import marked from '../lib/marked'
+import marked from "../lib/marked";
 
 let timeout = null;
 
 export default {
-  name: 'notes-editor',
-  props: ['content', 'id', 'dirty'],
+  name: "notes-editor",
+  props: ["content", "id", "dirty"],
   data() {
     return {
       showEditor: true
-    }
+    };
   },
   computed: {
-    textCompiled() { return marked.parse(this.content) }
+    textCompiled() {
+      return marked.parse(this.content);
+    }
   },
   methods: {
     onInput: function(e) {
-      let vm = this
-      let id = this.id
-      clearTimeout(timeout)
+      let vm = this;
+      let id = this.id;
+      clearTimeout(timeout);
       timeout = setTimeout(function() {
-        vm.$emit('contentUpdate', { content: e.target.value, id} )
-      }, 500)
+        vm.$emit("contentUpdate", { content: e.target.value, id });
+      }, 500);
     },
     toggleEditor: function() {
       this.showEditor = !this.showEditor;
     }
   }
-}
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-textarea {
-  border: 0;
-  width: 100%;
-  height: 100%;
-  resize: none;
-  outline: none;
+<style>
+.text-compiled h1 {
+  @apply text-3xl;
 }
 
-.editor-container {
-  height: calc(100vh - 110px);
-  margin: 20px;
-  padding: 20px;
-  border-radius: 0.25rem;
-  background-color: #fff;
+.text-compiled h2 {
+  @apply text-2xl;
 }
 
-.btn {
-	position: absolute;
-	top: 45%;
-	width: 20px;
-	padding: 0;
+.text-compiled h3 {
+  @apply text-xl text-gray-800;
 }
 
-.btn-editor {
-	right: 0;
-  border-radius: 4px 0 0 4px;
+.text-compiled h4 {
+  @apply text-lg;
 }
 
-.btn-results {
-	left: 0;
-  border-radius: 0 4px 4px 0;
+.text-compiled h6 {
+  @apply text-sm font-semibold;
 }
 
-.result-container {
-  overflow: auto;
+.text-compiled ul {
+  @apply list-disc list-inside;
 }
 
-.text-compiled {
-	margin-left: 20px;
-}
-
-.collapse-enter-active, .collapse-leave-active {
-	transition: flex-grow .35s linear;
-}
-
-.collapse-leave, .collapse-enter-to {
-	flex-grow: 1;
-}
-
-.collapse-enter, .collapse-leave-to {
-	flex-grow: 0;
-}
-
-.fade-enter-active, .fade-enter-leave {
-	transition: opacity .35s linear;
-}
-
-.fade-leave, .fade-enter-to {
-	opacity: 1;
-}
-
-.fade-leave-to, .fade-enter {
-	opacity: 0;
+.text-compiled ol {
+  @apply list-decimal list-inside;
 }
 </style>
