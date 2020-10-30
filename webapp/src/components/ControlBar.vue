@@ -66,8 +66,7 @@
         <button
           type="button"
           class="px-4 rounded-r-none btn-danger hover:bg-red-800"
-          :disabled="dirty"
-          @click="close"
+          @click="dirty ? tryReset() : close()"
         >
           &#x2573;
         </button>
