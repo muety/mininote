@@ -1,6 +1,6 @@
 {
     "name": "mininote",
-    "version": "0.5.0",
+    "version": "0.6.1",
     "description": "A simple Mardown note-taking editor",
     "main": "index.js",
     "scripts": {

@@ -52,19 +52,21 @@ function currentContent(state) {
   let id = state.selectedNoteId
   if (id < 0) return ''
   if (id in state.changes.update) return state.changes.update[id].content
-  return selectedNote(state).content
+  const note = selectedNote(state)
+  return note ? note.content : ''
 }
 
 function currentTitle(state) {
   let id = state.selectedNoteId
   if (id < 0) return ''
   if (id in state.changes.update) return state.changes.update[id].title
-  return selectedNote(state).title
+  const note = selectedNote(state)
+  return note ? note.title : ''
 }
 
 /// MUTATIONS ///
 function selectNote(state, id) {
-  if (id < 0) return null
+  if (id < 0) state.selectedNoteId = -1
   let notes = resolveNotes(state)
   if (notes.some((n) => n.id === id)) {
     state.selectedNoteId = id
@@ -168,13 +170,19 @@ const store = new Vuex.Store({
         let note = (state.notebook.notes || []).find(
           (n) => n.id === parseInt(id),
         )
-        let content = note.content
 
+        if (!note) return
+
+        let content = note.content
         note.content = ''
         note.content = content
       })
 
       state.changes.update = {}
+      
+      if (!resolveNotes(state).length) {
+        selectFirst(state) // select none, i.e. -1
+      }
     },
     reset(state) {
       for (let prop in emptyState) {
