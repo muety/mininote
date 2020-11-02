@@ -2,6 +2,8 @@ import Vuex from 'vuex'
 
 import api from '../api'
 
+import { version } from '../../package.json'
+
 /* eslint-disable no-case-declarations */
 
 const emptyState = {
@@ -14,7 +16,7 @@ const emptyState = {
   },
   selectedNoteId: -1,
   loadNotebookId: '',
-  version: require('../../package.json').version,
+  version,
 }
 
 /// GETTERS ///
@@ -179,7 +181,7 @@ const store = new Vuex.Store({
       })
 
       state.changes.update = {}
-      
+
       if (!resolveNotes(state).length) {
         selectFirst(state) // select none, i.e. -1
       }

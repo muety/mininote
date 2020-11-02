@@ -1,0 +1,10 @@
+# Configuration to serve production app under a subpath using Caddy 2 web file_server to test BASE_URL rewriting
+# Run: caddy run -config Caddyfile-dev
+# https://caddyserver.com/download
+
+http://localhost:8080 {
+    route /mininote* {
+        uri strip_prefix /mininote
+        reverse_proxy http://localhost:3000
+    }
+}

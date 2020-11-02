@@ -62,12 +62,12 @@
 
 <script>
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import { actions, getters, mutations, state } from '@/store/types'
+  import { actions, getters, mutations, state } from './store/types'
 
-  import NotesEditor from '@/components/NotesEditor'
-  import NotesPicker from '@/components/NotesPicker'
-  import NotebooksPicker from '@/components/NotebooksPicker'
-  import ControlBar from '@/components/ControlBar'
+  import NotesEditor from './components/NotesEditor.vue'
+  import NotesPicker from './components/NotesPicker.vue'
+  import NotebooksPicker from './components/NotebooksPicker.vue'
+  import ControlBar from './components/ControlBar.vue'
 
   export default {
     components: {

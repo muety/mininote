@@ -1,5 +1,7 @@
 <template>
-  <div class="absolute top-0 left-0 flex justify-center w-full h-full bg-black bg-opacity-50">
+  <div
+    class="absolute top-0 left-0 flex justify-center w-full h-full bg-black bg-opacity-50"
+  >
     <div
       class="absolute flex flex-col w-1/2 px-8 py-2 m-12 bg-gray-100 border rounded-lg shadow-lg"
     >

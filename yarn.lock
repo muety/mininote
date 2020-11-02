@@ -393,6 +393,11 @@ lokijs@^1.5.11:
   resolved "https://registry.yarnpkg.com/lokijs/-/lokijs-1.5.11.tgz#2b2ea82ec66050e4b112c6cfc588dac22d362b13"
   integrity sha512-YYyuBPxMn/oS0tFznQDbIX5XL1ltMcwFqCboDr8voYE4VCDzR5vAsrvQDhlnua4lBeqMqHmLvUXRTmRUzUKH1Q==
 
+marked@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/marked/-/marked-1.2.2.tgz#5d77ffb789c4cb0ae828bfe76250f7140b123f70"
+  integrity sha512-5jjKHVl/FPo0Z6ocP3zYhKiJLzkwJAw4CZoLjv57FkvbUuwOX4LIBBGGcXjAY6ATcd1q9B8UTj5T9Umauj0QYQ==
+
 media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"

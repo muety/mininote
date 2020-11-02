@@ -37,7 +37,7 @@
 </template>
 
 <script>
-  import marked from '@/lib/marked'
+  import marked from 'marked'
 
   let timeout = null
 

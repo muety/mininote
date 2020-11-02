@@ -155,13 +155,13 @@
 </template>
 
 <script>
-  import { md5 } from '@/lib/md5'
+  import { md5 } from '../lib/md5'
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import { actions, getters, mutations } from '@/store/types'
+  import { actions, getters, mutations } from '../store/types'
 
-  import api from '@/api'
+  import api from '../api'
 
-  import CoreModal from '@/components/core/CoreModal'
+  import CoreModal from './core/CoreModal.vue'
 
   export default {
     components: {

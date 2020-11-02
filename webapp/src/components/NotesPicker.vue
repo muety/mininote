@@ -80,9 +80,9 @@
 
 <script>
   import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import { actions, getters, mutations } from '@/store/types'
+  import { actions, getters, mutations } from '../store/types'
 
-  import CoreModal from '@/components/core/CoreModal'
+  import CoreModal from './core/CoreModal.vue'
 
   export default {
     components: {
