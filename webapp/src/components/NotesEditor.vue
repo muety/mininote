@@ -38,6 +38,9 @@
 
 <script>
   import marked from 'marked'
+  import createDOMPurify from 'dompurify'
+  
+  const DOMPurify = createDOMPurify(window)
 
   let timeout = null
 
@@ -63,7 +66,7 @@
     },
     computed: {
       textCompiled() {
-        return marked.parse(this.content)
+        return DOMPurify.sanitize(marked.parse(this.content))
       },
     },
     methods: {
