@@ -6,7 +6,5 @@ import './assets/css/style.css'
 
 import App from './App.vue'
 import { useStore } from './store'
-// https://github.com/muety/mininote/issues/9
-// import { useRouter }  from './router'
 
 createApp(App).use(useStore()).mount('#app')

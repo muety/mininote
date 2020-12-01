@@ -81,6 +81,10 @@ function selectFirst(state) {
   state.selectedNoteId = id
 }
 
+function updateUrl(state) {
+  location.hash = state.notebook.id ? `#/notebook/${state.notebook.id}` : ''
+}
+
 /// STORE ///
 const store = new Vuex.Store({
   state: JSON.parse(JSON.stringify(emptyState)),
@@ -100,6 +104,7 @@ const store = new Vuex.Store({
     setNotebook(state, { id, password }) {
       state.notebook.id = id
       state.notebook.password = password
+      updateUrl(state)
     },
     setNotes(state, notes) {
       state.notebook.notes = notes
@@ -190,6 +195,7 @@ const store = new Vuex.Store({
       for (let prop in emptyState) {
         state[prop] = JSON.parse(JSON.stringify(emptyState[prop]))
       }
+      updateUrl(state)
     },
   },
   actions: {

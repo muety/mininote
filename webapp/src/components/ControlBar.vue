@@ -268,6 +268,7 @@
           .then(() => {
             vm.state.opening = false
             vm.state.loaded = true
+
             this.selectFirst()
 
             this.inputs.newName = this.inputs.name

@@ -69,6 +69,14 @@
   import NotebooksPicker from './components/NotebooksPicker.vue'
   import ControlBar from './components/ControlBar.vue'
 
+  const notebookHashRe = /^#\/notebook\/([a-z0-9_\-]+)$/g
+
+  function parseNotebookUrl() {
+    // attempt to parse a requested notebook name from the url's hash
+    const match = [...location.hash.matchAll(notebookHashRe)]
+    return match && match.length && match[0].length == 2 ? match[0][1] : null
+  }
+
   export default {
     components: {
       NotesEditor,
@@ -94,9 +102,12 @@
         return false
       },
     },
-    mounted() {
+    async mounted() {
       window.addEventListener('beforeunload', this.didIntentToLeave)
-      this.listNotebooks()
+      
+      await this.listNotebooks()
+
+      this.tryOpenFromUrl()
     },
     methods: {
       ...mapActions([actions.LIST_NOTEBOOKS]),
@@ -104,6 +115,7 @@
         mutations.SELECT_NOTE,
         mutations.SET_LOAD_NOTEBOOK,
         mutations.ADD_CHANGE,
+        mutations.RESET,
       ]),
       onNoteSelected: function (noteId) {
         this.selectNote(noteId)
@@ -142,6 +154,13 @@
           event.returnValue = ''
         }
       },
+      tryOpenFromUrl: function () {
+        const initialNotebookId = parseNotebookUrl()
+        const initialNotebook = this.notebooks.some(n => n.id === initialNotebookId)
+        if (initialNotebook) {
+          this.onNotebookSelected(initialNotebookId)
+        }
+      }
     },
   }
 </script>
