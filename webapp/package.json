@@ -35,7 +35,7 @@
     "eslint-plugin-vue": "^7.1.0",
     "prettier": "^2.1.2",
     "typescript": "~3.9.3",
-    "vite": "^1.0.0-rc.9",
+    "vite": "^1.0.0-rc.13",
     "vue-jest": "^5.0.0-0"
   },
   "eslintConfig": {

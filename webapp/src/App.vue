@@ -69,7 +69,7 @@
   import NotebooksPicker from './components/NotebooksPicker.vue'
   import ControlBar from './components/ControlBar.vue'
 
-  const notebookHashRe = /^#\/notebook\/([a-z0-9_\-]+)$/g
+  const notebookHashRe = /^#\/notebook\/([a-z0-9_-]+)$/g
 
   function parseNotebookUrl() {
     // attempt to parse a requested notebook name from the url's hash
@@ -104,7 +104,7 @@
     },
     async mounted() {
       window.addEventListener('beforeunload', this.didIntentToLeave)
-      
+
       await this.listNotebooks()
 
       this.tryOpenFromUrl()
@@ -156,11 +156,13 @@
       },
       tryOpenFromUrl: function () {
         const initialNotebookId = parseNotebookUrl()
-        const initialNotebook = this.notebooks.some(n => n.id === initialNotebookId)
+        const initialNotebook = this.notebooks.some(
+          (n) => n.id === initialNotebookId,
+        )
         if (initialNotebook) {
           this.onNotebookSelected(initialNotebookId)
         }
-      }
+      },
     },
   }
 </script>

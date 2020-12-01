@@ -39,7 +39,7 @@
 <script>
   import marked from 'marked'
   import createDOMPurify from 'dompurify'
-  
+
   const DOMPurify = createDOMPurify(window)
 
   let timeout = null
