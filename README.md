@@ -37,7 +37,7 @@ $ yarn start
 ## 🐳 How to run with Docker?
 ```bash
 # Create a persistent volume
-$ docker volume create mininote data
+$ docker volume create mininote-data
 
 # Run the container
 $ docker run -d -p 3000:3000 -v mininote-data:/app/data --name mininote n1try/mininote
