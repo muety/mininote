@@ -215,6 +215,7 @@
       handleError: function (err) {
         this.$emit('alert', err.message)
         this.reset()
+        this.close()
       },
       tryReset: function () {
         if (!this.dirty) this.reset()
@@ -255,7 +256,7 @@
               setTimeout(() => vm.$refs.refCreatePasswordInput.focus(), 0)
             }
           })
-          .catch(() => vm.handleError(null))
+          .catch(vm.handleError)
       },
       _openNotebook: function () {
         let vm = this
