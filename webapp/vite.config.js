@@ -1,3 +1,5 @@
+import vue from "@vitejs/plugin-vue";
+
 export default {
   proxy: {
     "/api": {
@@ -6,4 +8,5 @@ export default {
       rewrite: (path) => path.replace(/^\/api/, ""),
     },
   },
+  plugins: [vue()],
 };

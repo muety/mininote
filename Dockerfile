@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:14-alpine
 
 MAINTAINER Ferdinand Mütsch <ferdinand@muetsch.io>
 
@@ -15,7 +15,7 @@ RUN cd /app && yarn
 
 RUN cd /app/webapp && \
     yarn && \
-    yarn build && \
+    yarn build:base && \
     cd ..
 
 ENTRYPOINT yarn start

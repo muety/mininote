@@ -1,11 +1,12 @@
 {
   "name": "mininote-frontend",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "description": "A simple Mardown note-taking editor.",
   "author": "Ferdinand Mütsch <mail@ferdinand-muetsch.de>",
   "scripts": {
-    "build": "yarn lint && yarn test && vite build --base $BASE_URL",
+    "build": "yarn lint && yarn test && vite build",
+    "build:base": "yarn lint && yarn test && vite build --base $BASE_URL",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "dev": "vite --port 8080",
@@ -21,6 +22,7 @@
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "^1.0.4",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-unit-jest": "~4.5.0",
@@ -35,7 +37,7 @@
     "eslint-plugin-vue": "^7.1.0",
     "prettier": "^2.1.2",
     "typescript": "~3.9.3",
-    "vite": "^1.0.0-rc.13",
+    "vite": "^2.0.0-beta.15",
     "vue-jest": "^5.0.0-0"
   },
   "eslintConfig": {
