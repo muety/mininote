@@ -36,7 +36,7 @@
       <input
         v-model="query"
         type="text"
-        class="placeholder-gray-700 rounded-l-none"
+        class="placeholder-gray-700 rounded-l-none flex-grow"
         placeholder="Search ..."
       />
     </div>
@@ -58,11 +58,11 @@
         </div>
       </li>
     </ul>
-    <div class="flex mt-8">
+    <div class="flex my-8">
       <input
         v-model="newNoteInput"
         type="text"
-        class="placeholder-gray-700 rounded-r-none"
+        class="placeholder-gray-700 rounded-r-none flex-grow"
         placeholder="Add note ..."
         @keyup.enter="_addNote"
       />

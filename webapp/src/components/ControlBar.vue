@@ -58,11 +58,16 @@
     </core-modal>
 
     <div class="flex justify-between">
-      <div class="w-1/4 text-2xl text-gray-400">
+      <!-- TODO: Move logo section out of here and pull it back in via a slot -->
+      <div class="w-1/4 text-2xl text-gray-400 flex-shrink-0 hidden md:inline" :class="{'hidden': state.loaded}">
         <span>✎ Mini_Note</span>
         <span class="ml-1 text-xs text-green-600">BETA</span>
       </div>
-      <div id="notebook-chooser" class="flex justify-center w-1/2">
+      <div
+        id="notebook-chooser"
+        class="flex justify-center md:w-1/2 flex-shrink flex-grow"
+        :class="{ 'w-full': !state.loaded }"
+      >
         <button
           type="button"
           class="px-4 rounded-r-none btn-danger hover:bg-red-800"
@@ -75,7 +80,7 @@
           ref="refNotebookInput"
           v-model="inputs.name"
           type="text"
-          class="placeholder-gray-700 rounded-l-none rounded-r-none"
+          class="placeholder-gray-700 rounded-l-none rounded-r-none flex-grow flex-shrink"
           placeholder="Open or create notebook ..."
           :disabled="state.loaded"
           autofocus
@@ -86,7 +91,7 @@
           ref="refCreatePasswordInput"
           v-model="inputs.password"
           type="password"
-          class="placeholder-gray-700 rounded-l-none rounded-r-none"
+          class="placeholder-gray-700 rounded-l-none rounded-r-none flex-grow flex-shrink"
           placeholder="Choose a password for the new notebook..."
           @keyup.enter="_createNotebook"
         />
@@ -95,7 +100,7 @@
           ref="refOpenPasswordInput"
           v-model="inputs.password"
           type="password"
-          class="placeholder-gray-700 rounded-l-none rounded-r-none"
+          class="placeholder-gray-700 rounded-l-none rounded-r-none flex-grow flex-shrink"
           placeholder="Enter password ..."
           @keyup.enter="_openNotebook"
         />
@@ -127,7 +132,7 @@
           Create
         </button>
       </div>
-      <div class="flex justify-end w-1/4 space-x-1">
+      <div class="flex justify-end w-1/4 space-x-1" :class="{ 'hidden': !state.loaded }">
         <button
           v-if="dirty"
           class="px-4 btn-primary hover:bg-green-700"
@@ -155,168 +160,168 @@
 </template>
 
 <script>
-  import { md5 } from '../lib/md5'
-  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import { actions, getters, mutations } from '../store/types'
+import { md5 } from '../lib/md5'
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+import { actions, getters, mutations } from '../store/types'
 
-  import api from '../api'
+import api from '../api'
 
-  import CoreModal from './core/CoreModal.vue'
+import CoreModal from './core/CoreModal.vue'
 
-  export default {
-    components: {
-      CoreModal,
-    },
-    emits: ['alert'],
-    data() {
-      return {
-        inputs: {
-          name: '',
-          password: '',
-          newName: '',
-          newPassword: '',
-        },
-        state: {
-          opening: false,
-          creating: false,
-          loaded: false,
-        },
-        showDiscardModal: false,
-        showSettingsModal: false,
+export default {
+  components: {
+    CoreModal,
+  },
+  emits: ['alert'],
+  data() {
+    return {
+      inputs: {
+        name: '',
+        password: '',
+        newName: '',
+        newPassword: '',
+      },
+      state: {
+        opening: false,
+        creating: false,
+        loaded: false,
+      },
+      showDiscardModal: false,
+      showSettingsModal: false,
+    }
+  },
+  computed: {
+    ...mapState({
+      notebook: (state) => state.notebook,
+      loadNotebookId: (state) => state.loadNotebookId,
+    }),
+    ...mapGetters([getters.DIRTY]),
+  },
+  watch: {
+    loadNotebookId: function (newId, oldId) {
+      if (newId !== '' && newId !== oldId) {
+        this.inputs.name = newId
       }
     },
-    computed: {
-      ...mapState({
-        notebook: (state) => state.notebook,
-        loadNotebookId: (state) => state.loadNotebookId,
-      }),
-      ...mapGetters([getters.DIRTY]),
+  },
+  methods: {
+    ...mapMutations([
+      mutations.REVERT_CHANGES,
+      mutations.SELECT_FIRST,
+      mutations.RESET,
+    ]),
+    ...mapActions([
+      actions.LIST_NOTEBOOKS,
+      actions.LOAD_NOTEBOOK,
+      actions.CREATE_NOTEBOOK,
+      actions.UPDATE_NOTEBOOK,
+      actions.APPLY_CHANGES,
+    ]),
+    handleError: function (err) {
+      this.$emit('alert', err.message)
+      this.reset()
+      this.close()
     },
-    watch: {
-      loadNotebookId: function (newId, oldId) {
-        if (newId !== '' && newId !== oldId) {
-          this.inputs.name = newId
-        }
-      },
+    tryReset: function () {
+      if (!this.dirty) this.reset()
+      else this.showDiscardModal = true
     },
-    methods: {
-      ...mapMutations([
-        mutations.REVERT_CHANGES,
-        mutations.SELECT_FIRST,
-        mutations.RESET,
-      ]),
-      ...mapActions([
-        actions.LIST_NOTEBOOKS,
-        actions.LOAD_NOTEBOOK,
-        actions.CREATE_NOTEBOOK,
-        actions.UPDATE_NOTEBOOK,
-        actions.APPLY_CHANGES,
-      ]),
-      handleError: function (err) {
-        this.$emit('alert', err.message)
-        this.reset()
-        this.close()
-      },
-      tryReset: function () {
-        if (!this.dirty) this.reset()
-        else this.showDiscardModal = true
-      },
-      doReset: function () {
-        this.revertChanges()
-        this.showDiscardModal = false
-      },
-      close: function () {
-        this.inputs = {
-          name: '',
-          password: '',
-          newName: '',
-          newPassword: '',
-        }
-        this.state = {
-          opening: false,
-          creating: false,
-          loaded: false,
-        }
-        this.reset()
-        this.listNotebooks()
-        setTimeout(() => this.$refs.refNotebookInput.focus(), 0)
-      },
-      _tryNotebook: function () {
-        let vm = this
-        if (!this.inputs.name) return
-
-        api
-          .exists(this.inputs.name.toLowerCase())
-          .then((exists) => {
-            if (exists) {
-              vm.state.opening = true
-              setTimeout(() => vm.$refs.refOpenPasswordInput.focus(), 0)
-            } else {
-              vm.state.creating = true
-              setTimeout(() => vm.$refs.refCreatePasswordInput.focus(), 0)
-            }
-          })
-          .catch(vm.handleError)
-      },
-      _openNotebook: function () {
-        let vm = this
-        if (!this.inputs.name || !this.inputs.password) return
-
-        this.loadNotebook({
-          id: this.inputs.name.toLowerCase(),
-          password: md5(this.inputs.password),
-        })
-          .then(() => {
-            vm.state.opening = false
-            vm.state.loaded = true
-
-            this.selectFirst()
-
-            this.inputs.newName = this.inputs.name
-            this.inputs.newPassword = this.inputs.password
-          })
-          .catch(vm.handleError)
-      },
-      _createNotebook: function () {
-        let vm = this
-        if (!this.inputs.name || !this.inputs.password) return
-
-        this.createNotebook({
-          id: this.inputs.name.toLowerCase(),
-          password: md5(this.inputs.password),
-        })
-          .then(() => {
-            vm.state.creating = false
-            vm.state.loaded = true
-          })
-          .catch(vm.handleError)
-      },
-      saveNotes: function () {
-        let vm = this
-        if (!this.inputs.name || !this.inputs.password) return
-
-        this.applyChanges()
-          .then(() => this.$emit('alert', 'Saved changes.', 'success'))
-          .catch(vm.handleError)
-      },
-      _updateNotebook: function () {
-        let vm = this
-        if (!this.inputs.name || !this.inputs.password) return
-
-        this.updateNotebook({
-          id: this.inputs.newName.toLowerCase(),
-          password: md5(this.inputs.newPassword),
-        })
-          .then(() => {
-            ;(this.inputs.name = this.inputs.newName),
-              (this.inputs.password = this.inputs.newPassword)
-            this.$emit('alert', 'Notebook updated.', 'success')
-            this.showSettingsModal = false
-          })
-          .catch(vm.handleError)
-      },
+    doReset: function () {
+      this.revertChanges()
+      this.showDiscardModal = false
     },
-  }
+    close: function () {
+      this.inputs = {
+        name: '',
+        password: '',
+        newName: '',
+        newPassword: '',
+      }
+      this.state = {
+        opening: false,
+        creating: false,
+        loaded: false,
+      }
+      this.reset()
+      this.listNotebooks()
+      setTimeout(() => this.$refs.refNotebookInput.focus(), 0)
+    },
+    _tryNotebook: function () {
+      let vm = this
+      if (!this.inputs.name) return
+
+      api
+        .exists(this.inputs.name.toLowerCase())
+        .then((exists) => {
+          if (exists) {
+            vm.state.opening = true
+            setTimeout(() => vm.$refs.refOpenPasswordInput.focus(), 0)
+          } else {
+            vm.state.creating = true
+            setTimeout(() => vm.$refs.refCreatePasswordInput.focus(), 0)
+          }
+        })
+        .catch(vm.handleError)
+    },
+    _openNotebook: function () {
+      let vm = this
+      if (!this.inputs.name || !this.inputs.password) return
+
+      this.loadNotebook({
+        id: this.inputs.name.toLowerCase(),
+        password: md5(this.inputs.password),
+      })
+        .then(() => {
+          vm.state.opening = false
+          vm.state.loaded = true
+
+          this.selectFirst()
+
+          this.inputs.newName = this.inputs.name
+          this.inputs.newPassword = this.inputs.password
+        })
+        .catch(vm.handleError)
+    },
+    _createNotebook: function () {
+      let vm = this
+      if (!this.inputs.name || !this.inputs.password) return
+
+      this.createNotebook({
+        id: this.inputs.name.toLowerCase(),
+        password: md5(this.inputs.password),
+      })
+        .then(() => {
+          vm.state.creating = false
+          vm.state.loaded = true
+        })
+        .catch(vm.handleError)
+    },
+    saveNotes: function () {
+      let vm = this
+      if (!this.inputs.name || !this.inputs.password) return
+
+      this.applyChanges()
+        .then(() => this.$emit('alert', 'Saved changes.', 'success'))
+        .catch(vm.handleError)
+    },
+    _updateNotebook: function () {
+      let vm = this
+      if (!this.inputs.name || !this.inputs.password) return
+
+      this.updateNotebook({
+        id: this.inputs.newName.toLowerCase(),
+        password: md5(this.inputs.newPassword),
+      })
+        .then(() => {
+          ;(this.inputs.name = this.inputs.newName),
+            (this.inputs.password = this.inputs.newPassword)
+          this.$emit('alert', 'Notebook updated.', 'success')
+          this.showSettingsModal = false
+        })
+        .catch(vm.handleError)
+    },
+  },
+}
 </script>
 
 <style scoped></style>

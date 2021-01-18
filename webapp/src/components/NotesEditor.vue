@@ -11,17 +11,17 @@
       ></textarea>
       <div class="flex items-center">
         <button
-          class="p-1 rounded-r-none btn-primary btn-editor"
+          class="p-1 rounded-r-none btn-primary btn-editor hidden lg:inline"
           @click="toggleEditor()"
         >
           ◀
         </button>
       </div>
     </div>
-    <div class="flex flex-grow w-1/2 bg-gray-100 rounded-md">
+    <div class="hidden lg:flex flex-grow w-1/2 bg-gray-100 rounded-md">
       <div class="flex items-center">
         <button
-          v-if="!showEditor"
+          v-show="!showEditor"
           class="p-1 rounded-l-none btn-primary btn-editor"
           @click="toggleEditor()"
         >
