@@ -132,7 +132,7 @@
           Create
         </button>
       </div>
-      <div class="flex justify-end w-1/4 space-x-1" :class="{ 'hidden': !state.loaded }">
+      <div class="hidden md:flex justify-end w-1/4 space-x-1" :class="{ 'hidden': !state.loaded }">
         <button
           v-if="dirty"
           class="px-4 btn-primary hover:bg-green-700"
