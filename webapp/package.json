@@ -1,6 +1,6 @@
 {
   "name": "mininote-frontend",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "private": true,
   "description": "A simple Mardown note-taking editor.",
   "author": "Ferdinand Mütsch <mail@ferdinand-muetsch.de>",
@@ -16,13 +16,13 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "dompurify": "^2.2.2",
-    "marked": "^1.2.2",
+    "marked": "^2.0.0",
     "tailwindcss": "^1.9.6",
     "vue": "^3.0.0",
     "vuex": "^4.0.0-0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^1.0.4",
+    "@vitejs/plugin-vue": "^1.1.4",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-plugin-unit-jest": "~4.5.0",
@@ -37,7 +37,7 @@
     "eslint-plugin-vue": "^7.1.0",
     "prettier": "^2.1.2",
     "typescript": "~3.9.3",
-    "vite": "^2.0.0-beta.15",
+    "vite": "^2.0.0-beta.67",
     "vue-jest": "^5.0.0-0"
   },
   "eslintConfig": {

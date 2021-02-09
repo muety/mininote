@@ -15,7 +15,10 @@
 
     <div class="flex flex-col flex-grow">
       <control-bar :has-changes="hasChanges" @alert="showAlert"></control-bar>
-      <div v-if="!loaded && notebooks.length" class="flex justify-center mt-20 sm:mt-32 md:mt-48">
+      <div
+        v-if="!loaded && notebooks.length"
+        class="flex justify-center mt-20 sm:mt-32 md:mt-48"
+      >
         <div class="w-full md:w-1/2 lg:w-1/3">
           <div>
             <h3>Your Notebooks</h3>
@@ -26,7 +29,10 @@
           </div>
         </div>
       </div>
-      <div v-if="loaded" class="flex flex-col md:flex-row justify-between flex-grow mt-8 mb-4">
+      <div
+        v-if="loaded"
+        class="flex flex-col md:flex-row justify-between flex-grow mt-8 mb-4"
+      >
         <notes-picker
           @noteSelected="onNoteSelected"
           @alert="showAlert"
