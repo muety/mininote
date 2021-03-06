@@ -1,6 +1,6 @@
 {
   "name": "mininote-frontend",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "private": true,
   "description": "A simple Mardown note-taking editor.",
   "author": "Ferdinand Mütsch <mail@ferdinand-muetsch.de>",
@@ -37,7 +37,7 @@
     "eslint-plugin-vue": "^7.1.0",
     "prettier": "^2.1.2",
     "typescript": "~3.9.3",
-    "vite": "^2.0.0-beta.67",
+    "vite": "^2.0.5",
     "vue-jest": "^5.0.0-0"
   },
   "eslintConfig": {
