@@ -3,7 +3,6 @@
 ![](https://badges.fw-web.space/github/license/muety/mininote?style=flat-square)
 ![GitHub code size in bytes](https://badges.fw-web.space/github/languages/code-size/muety/mininote?style=flat-square)
 ![GitHub last commit](https://badges.fw-web.space/github/last-commit/muety/mininote?style=flat-square)
-![Docker Cloud Build Status](https://badges.fw-web.space/docker/cloud/build/n1try/mininote?style=flat-square)
 [![](https://badges.fw-web.space/liberapay/receives/muety.svg?logo=liberapay&style=flat-square)](https://liberapay.com/muety/)
 
 ---
