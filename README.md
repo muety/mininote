@@ -7,7 +7,7 @@
 
 ---
 
-A simple, self-hosted Markdown note-taking app built with [Vue 3](https://v3.vuejs.org), and [Express](http://expressjs.com). Check out the **[hosted demo](https://apps.muetsch.io/mininote)**!
+A simple, self-hosted Markdown note-taking app built with [Vue 3](https://v3.vuejs.org), and [Express](http://expressjs.com). Check out the **[hosted demo](https://mininote.lejad.repl.co)**!
 
 ![](https://i.imgur.com/Y9TFu6w.png)
 
