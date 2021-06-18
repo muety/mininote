@@ -1,4 +1,6 @@
 'use strict'
+const cryptoJS = require('crypto-js')
+let secret = 'My Secret Passphrase'
 
 const config = require('../config'),
     lfsa = require('lokijs/src/loki-fs-structured-adapter'),
@@ -69,12 +71,24 @@ exports.delete = (req, res) => {
     return res.status(200).end()
 }
 
+
 exports.getNotes = (req, res) => {
     let notebook = notebooks.findOne({ id: req.params.id })
     if (!notebook) return res.status(404).end()
     if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
-    
+    try{
+    notebook.notes.forEach(dec => {
+        dec.content = cryptoJS.AES.decrypt(dec.content, secret).toString(cryptoJS.enc.Utf8);
+        
+    })
     return res.send(notebook.notes)
+    } finally {
+        notebook.notes.forEach(dec => {
+        dec.content = cryptoJS.AES.encrypt(dec.content, secret).toString()
+
+    })
+    }
+    
 }
 
 exports.addNote = (req, res) => {
@@ -86,10 +100,9 @@ exports.addNote = (req, res) => {
     notebook.notes.push({
         id: newId,
         title: req.body.title,
-        content: req.body.content
+        content: cryptoJS.AES.encrypt(req.body.content, secret).toString()
     })
     notebooks.update(notebook)
-
     return res.status(201).send({ id: newId })
 }
 
@@ -102,7 +115,7 @@ exports.updateNote = (req, res) => {
     if (!note) return res.status(404).end()
 
     note.title = req.body.title
-    note.content = req.body.content
+    note.content = cryptoJS.AES.encrypt(req.body.content, secret).toString()
     notebooks.update(notebook)
 
     return res.status(200).end()

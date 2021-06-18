@@ -59,7 +59,7 @@
       </div>
     </div>
     <div class="text-xs text-gray-400 footer">
-      Version {{ version }} | Made w/ &#x2661; by
+      Made with &#x2661; by
       <a href="https://muetsch.io">Ferdinand Mütsch</a> |
       <a href="https://github.com/muety/mininote">GitHub</a>
     </div>

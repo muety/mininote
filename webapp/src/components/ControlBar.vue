@@ -63,8 +63,7 @@
         class="w-1/4 text-2xl text-gray-400 flex-shrink-0 hidden md:inline"
         :class="{ hidden: state.loaded }"
       >
-        <span>✎ Mini_Note</span>
-        <span class="ml-1 text-xs text-green-600">BETA</span>
+        <span>📝ecmanote</span>
       </div>
       <div
         id="notebook-chooser"
