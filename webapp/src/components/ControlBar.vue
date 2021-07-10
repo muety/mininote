@@ -83,7 +83,11 @@
           ref="refNotebookInput"
           v-model="inputs.name"
           type="text"
-          class="placeholder-gray-700 rounded-l-none rounded-r-none flex-grow flex-shrink"
+          class="
+            placeholder-gray-700
+            rounded-l-none rounded-r-none
+            flex-grow flex-shrink
+          "
           placeholder="Open or create notebook ..."
           :disabled="state.loaded"
           autofocus
@@ -94,7 +98,11 @@
           ref="refCreatePasswordInput"
           v-model="inputs.password"
           type="password"
-          class="placeholder-gray-700 rounded-l-none rounded-r-none flex-grow flex-shrink"
+          class="
+            placeholder-gray-700
+            rounded-l-none rounded-r-none
+            flex-grow flex-shrink
+          "
           placeholder="Choose a password for the new notebook..."
           @keyup.enter="_createNotebook"
         />
@@ -103,7 +111,11 @@
           ref="refOpenPasswordInput"
           v-model="inputs.password"
           type="password"
-          class="placeholder-gray-700 rounded-l-none rounded-r-none flex-grow flex-shrink"
+          class="
+            placeholder-gray-700
+            rounded-l-none rounded-r-none
+            flex-grow flex-shrink
+          "
           placeholder="Enter password ..."
           @keyup.enter="_openNotebook"
         />
@@ -167,9 +179,10 @@
 
 <script>
   import { md5 } from '../lib/md5'
-  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import { actions, getters, mutations } from '../store/types'
+  import { toRefs } from 'vue'
 
+  import { actions, getters, mutations } from '../store/types'
+  import { STORE_KEY } from '../store'
   import api from '../api'
 
   import CoreModal from './core/CoreModal.vue'
@@ -178,6 +191,7 @@
     components: {
       CoreModal,
     },
+    inject: [STORE_KEY],
     emits: ['alert'],
     data() {
       return {
@@ -194,14 +208,13 @@
         },
         showDiscardModal: false,
         showSettingsModal: false,
+        ...toRefs(this.store.state),
       }
     },
     computed: {
-      ...mapState({
-        notebook: (state) => state.notebook,
-        loadNotebookId: (state) => state.loadNotebookId,
-      }),
-      ...mapGetters([getters.DIRTY]),
+      [getters.DIRTY]() {
+        return this.store.getters[getters.DIRTY].value
+      },
     },
     watch: {
       loadNotebookId: function (newId, oldId) {
@@ -211,18 +224,30 @@
       },
     },
     methods: {
-      ...mapMutations([
-        mutations.REVERT_CHANGES,
-        mutations.SELECT_FIRST,
-        mutations.RESET,
-      ]),
-      ...mapActions([
-        actions.LIST_NOTEBOOKS,
-        actions.LOAD_NOTEBOOK,
-        actions.CREATE_NOTEBOOK,
-        actions.UPDATE_NOTEBOOK,
-        actions.APPLY_CHANGES,
-      ]),
+      [mutations.REVERT_CHANGES]() {
+        return this.store.mutations[mutations.REVERT_CHANGES](...arguments)
+      },
+      [mutations.SELECT_FIRST]() {
+        return this.store.mutations[mutations.SELECT_FIRST](...arguments)
+      },
+      [mutations.RESET]() {
+        return this.store.mutations[mutations.RESET](...arguments)
+      },
+      [actions.LIST_NOTEBOOKS]() {
+        return this.store.actions[actions.LIST_NOTEBOOKS](...arguments)
+      },
+      [actions.LOAD_NOTEBOOK]() {
+        return this.store.actions[actions.LOAD_NOTEBOOK](...arguments)
+      },
+      [actions.CREATE_NOTEBOOK]() {
+        return this.store.actions[actions.CREATE_NOTEBOOK](...arguments)
+      },
+      [actions.UPDATE_NOTEBOOK]() {
+        return this.store.actions[actions.UPDATE_NOTEBOOK](...arguments)
+      },
+      [actions.APPLY_CHANGES]() {
+        return this.store.actions[actions.APPLY_CHANGES](...arguments)
+      },
       handleError: function (err) {
         this.$emit('alert', err.message)
         this.reset()

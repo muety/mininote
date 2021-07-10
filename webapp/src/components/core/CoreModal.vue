@@ -1,9 +1,29 @@
 <template>
   <div
-    class="absolute top-0 left-0 flex justify-center w-full h-full bg-black bg-opacity-50"
+    class="
+      absolute
+      top-0
+      left-0
+      flex
+      justify-center
+      w-full
+      h-full
+      bg-black bg-opacity-50
+    "
   >
     <div
-      class="absolute flex flex-col w-1/2 px-8 py-2 m-12 bg-gray-100 border rounded-lg shadow-lg"
+      class="
+        absolute
+        flex flex-col
+        w-1/2
+        px-8
+        py-2
+        m-12
+        bg-gray-100
+        border
+        rounded-lg
+        shadow-lg
+      "
     >
       <header class="py-4 text-lg border-b border-gray-400">
         <slot name="header"></slot>

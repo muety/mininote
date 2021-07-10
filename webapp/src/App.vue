@@ -67,8 +67,10 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
-  import { actions, getters, mutations, state } from './store/types'
+  import { toRefs } from 'vue'
+  import { actions, getters, mutations } from './store/types'
+
+  import { STORE_KEY } from './store'
 
   import NotesEditor from './components/NotesEditor.vue'
   import NotesPicker from './components/NotesPicker.vue'
@@ -90,21 +92,30 @@
       NotebooksPicker,
       ControlBar,
     },
+    inject: [STORE_KEY],
     data() {
       return {
         alert: null,
+        ...toRefs(this.store.state),
       }
     },
     computed: {
-      ...mapState([state.SELECTED_NOTE_ID, state.VERSION, state.NOTEBOOKS]),
-      ...mapGetters([
-        getters.LOADED,
-        getters.SELECTED_NOTE,
-        getters.DIRTY,
-        getters.CURRENT_CONTENT,
-        getters.NOTE_BY_ID,
-      ]),
-      hasChanges: function () {
+      [getters.LOADED]() {
+        return this.store.getters[getters.LOADED].value
+      },
+      [getters.SELECTED_NOTE]() {
+        return this.store.getters[getters.SELECTED_NOTE].value
+      },
+      [getters.DIRTY]() {
+        return this.store.getters[getters.DIRTY].value
+      },
+      [getters.CURRENT_CONTENT]() {
+        return this.store.getters[getters.CURRENT_CONTENT].value
+      },
+      [getters.NOTES]() {
+        return this.store.getters[getters.NOTES].value
+      },
+      hasChanges() {
         return false
       },
     },
@@ -116,13 +127,24 @@
       this.tryOpenFromUrl()
     },
     methods: {
-      ...mapActions([actions.LIST_NOTEBOOKS]),
-      ...mapMutations([
-        mutations.SELECT_NOTE,
-        mutations.SET_LOAD_NOTEBOOK,
-        mutations.ADD_CHANGE,
-        mutations.RESET,
-      ]),
+      async [actions.LIST_NOTEBOOKS]() {
+        return this.store.actions[actions.LIST_NOTEBOOKS](...arguments)
+      },
+      [mutations.SELECT_NOTE]() {
+        return this.store.mutations[mutations.SELECT_NOTE](...arguments)
+      },
+      [mutations.SET_LOAD_NOTEBOOK]() {
+        return this.store.mutations[mutations.SET_LOAD_NOTEBOOK](...arguments)
+      },
+      [mutations.ADD_CHANGE]() {
+        return this.store.mutations[mutations.ADD_CHANGE](...arguments)
+      },
+      [mutations.RESET]() {
+        return this.store.mutations[mutations.RESET](...arguments)
+      },
+      getNoteById: function (noteId) {
+        return this.notes.find((n) => n.id === noteId)
+      },
       onNoteSelected: function (noteId) {
         this.selectNote(noteId)
       },
@@ -149,7 +171,7 @@
       onNoteUpdated: function ({ content, id }) {
         this.addChange({
           type: 'update',
-          payload: { ...this.noteById(id), content },
+          payload: { ...this.getNoteById(id), content },
         })
       },
       didIntentToLeave: function (event) {

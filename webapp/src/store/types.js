@@ -8,7 +8,6 @@ const getters = {
   DIRTY: 'dirty',
   NOTES: 'notes',
   SELECTED_NOTE: 'selectedNote',
-  NOTE_BY_ID: 'noteById',
   CURRENT_CONTENT: 'currentContent',
   CURRENT_TITLE: 'currentTitle',
 }

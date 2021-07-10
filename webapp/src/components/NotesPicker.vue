@@ -30,7 +30,14 @@
 
     <div class="flex mb-8">
       <span
-        class="flex items-center px-4 bg-gray-300 border-r border-gray-400 rounded-l-md"
+        class="
+          flex
+          items-center
+          px-4
+          bg-gray-300
+          border-r border-gray-400
+          rounded-l-md
+        "
         >&#x1F50D;</span
       >
       <input
@@ -45,7 +52,17 @@
       <li
         v-for="n in filteredNotes"
         :key="n.id"
-        class="flex items-center justify-between px-4 py-2 bg-gray-100 cursor-pointer first:rounded-t-md last:rounded-b-md"
+        class="
+          flex
+          items-center
+          justify-between
+          px-4
+          py-2
+          bg-gray-100
+          cursor-pointer
+          first:rounded-t-md
+          last:rounded-b-md
+        "
         :class="{ 'note-active': selectedNoteId == n.id }"
         @click="selectNote(n.id)"
       >
@@ -79,8 +96,10 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters, mapMutations, mapState } from 'vuex'
+  import { toRefs } from 'vue'
+
   import { actions, getters, mutations } from '../store/types'
+  import { STORE_KEY } from '../store'
 
   import CoreModal from './core/CoreModal.vue'
 
@@ -88,6 +107,7 @@
     components: {
       CoreModal,
     },
+    inject: [STORE_KEY],
     emits: ['alert', 'notebook-selected'],
     data() {
       return {
@@ -97,18 +117,19 @@
           newName: '',
         },
         showRenameModal: false,
+        ...toRefs(this.store.state),
       }
     },
     computed: {
-      ...mapState({
-        notebook: (state) => state.notebook,
-        selectedNoteId: (state) => state.selectedNoteId,
-      }),
-      ...mapGetters([
-        getters.NOTES,
-        getters.CURRENT_TITLE,
-        getters.SELECTED_NOTE,
-      ]),
+      [getters.NOTES]() {
+        return this.store.getters[getters.NOTES].value
+      },
+      [getters.CURRENT_TITLE]() {
+        return this.store.getters[getters.CURRENT_TITLE].value
+      },
+      [getters.SELECTED_NOTE]() {
+        return this.store.getters[getters.SELECTED_NOTE].value
+      },
       filteredNotes: function () {
         let filtered =
           this.query === ''
@@ -131,12 +152,18 @@
       this.selectFirst()
     },
     methods: {
-      ...mapMutations([
-        mutations.SELECT_NOTE,
-        mutations.SELECT_FIRST,
-        mutations.ADD_CHANGE,
-      ]),
-      ...mapActions([actions.UPDATE_NOTE]),
+      [mutations.SELECT_NOTE]() {
+        return this.store.mutations[mutations.SELECT_NOTE](...arguments)
+      },
+      [mutations.SELECT_FIRST]() {
+        return this.store.mutations[mutations.SELECT_FIRST](...arguments)
+      },
+      [mutations.ADD_CHANGE]() {
+        return this.store.mutations[mutations.ADD_CHANGE](...arguments)
+      },
+      [actions.UPDATE_NOTE]() {
+        return this.store.actions[actions.UPDATE_NOTE](...arguments)
+      },
       handleError: function (err) {
         this.$emit('alert', err.message)
         this.reset()
@@ -152,7 +179,6 @@
           title: this.newNoteInput,
           content: '',
         }
-
         this.addChange({ type: 'add', payload: note })
         this.selectNote(note.id)
         this.newNoteInput = ''

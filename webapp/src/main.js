@@ -5,6 +5,8 @@ import { createApp } from 'vue'
 import './assets/css/style.css'
 
 import App from './App.vue'
-import { useStore } from './store'
+import { STORE_KEY, createStore } from './store'
 
-createApp(App).use(useStore()).mount('#app')
+const app = createApp(App)
+app.provide(STORE_KEY, createStore())
+app.mount('#app')

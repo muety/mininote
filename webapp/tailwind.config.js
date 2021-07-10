@@ -3,12 +3,12 @@ module.exports = {
     // removeDeprecatedGapUtilities: true,
     // purgeLayersByDefault: true,
   },
-  purge: ["./src/**/*.html", "./src/**/*.css", "./src/**/*.vue"],
+  purge: ['./src/**/*.html', './src/**/*.css', './src/**/*.vue'],
   theme: {
     extend: {},
   },
   variants: {
-    borderRadius: ["first", "last"],
+    borderRadius: ['first', 'last'],
   },
   plugins: [],
 };
