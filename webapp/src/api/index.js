@@ -1,3 +1,6 @@
+import { basicAuth } from '../utils/http'
+import { encryptData, decryptData } from '../utils/crypto'
+
 const apiBaseUrl =
   process.env.NODE_ENV === 'development'
     ? 'http://localhost:3000/api'
@@ -12,99 +15,114 @@ function generateError(res) {
   return new Error('An error has occurred, sorry.')
 }
 
+function headers(password) {
+  let headers = new Headers()
+  headers.append('Content-Type', 'application/json')
+  if (password) {
+    headers.append('Authorization', 'Basic ' + basicAuth('anonymous', password))
+  }
+  return headers
+}
+
 const api = {
-  exists(notebookId) {
+  async exists(notebookId) {
     let req = new Request(`${apiBaseUrl}/notebook/${notebookId}`, {
       method: 'HEAD',
     })
-    return fetch(req).then((res) => res.status === 200)
+    return (await fetch(req)).status === 200
   },
-  list() {
+  async list() {
     let req = new Request(`${apiBaseUrl}/notebook`, { method: 'GET' })
-    return fetch(req).then((res) => {
-      if (res.status === 200) return res.json()
-      throw generateError(res)
-    })
+
+    const res = await fetch(req)
+    if (res.status === 200) return res.json()
+    throw generateError(res)
   },
-  create(notebookId, passwordHash) {
-    let headers = new Headers()
-    headers.append('Content-Type', 'application/json')
+  async create(id, password) {
     let req = new Request(`${apiBaseUrl}/notebook`, {
       method: 'POST',
-      body: JSON.stringify({ id: notebookId, password: passwordHash }),
-      headers: headers,
+      body: JSON.stringify({ id, password }),
+      headers: headers(),
     })
-    return fetch(req).then((res) => {
-      if (res.status === 201) return res.json()
-      throw generateError(res)
-    })
+
+    const res = await fetch(req)
+    if (res.status === 201) return res.json()
+    throw generateError(res)
   },
-  update(notebookId, passwordHash, notebook) {
-    let headers = new Headers()
-    headers.append('Authorization', 'Basic ' + passwordHash)
-    headers.append('Content-Type', 'application/json')
-    let req = new Request(`${apiBaseUrl}/notebook/${notebookId}`, {
+  async update(id, password, notebook) {
+    let req = new Request(`${apiBaseUrl}/notebook/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(notebook),
-      headers: headers,
+      body: JSON.stringify({ ...notebook }),
+      headers: headers(password),
     })
-    return fetch(req).then((res) => {
-      if (res.status === 200) return {}
-      throw generateError(res)
-    })
+
+    const res = await fetch(req)
+    if (res.status === 200) return {}
+    throw generateError(res)
   },
-  getNotes(notebookId, passwordHash) {
-    let headers = new Headers()
-    headers.append('Authorization', 'Basic ' + passwordHash)
-    let req = new Request(`${apiBaseUrl}/notebook/${notebookId}/notes`, {
+  async getNotes(id, password) {
+    let req = new Request(`${apiBaseUrl}/notebook/${id}/notes`, {
       method: 'GET',
-      headers: headers,
+      headers: headers(password),
       mode: 'cors',
     })
-    return fetch(req).then((res) => {
-      if (res.status === 200) return res.json()
-      throw generateError(res)
-    })
+
+    const res = await fetch(req)
+    if (res.status === 200) {
+      return Promise.all(
+        (await res.json()).map(async (note) => ({
+          ...note,
+          content: await decryptData(note.content, password),
+          title: await decryptData(note.title, password),
+        })),
+      )
+    }
+    throw generateError(res)
   },
-  addNote(notebookId, passwordHash, note) {
-    let headers = new Headers()
-    headers.append('Authorization', 'Basic ' + passwordHash)
-    headers.append('Content-Type', 'application/json')
-    let req = new Request(`${apiBaseUrl}/notebook/${notebookId}/notes`, {
+  async addNote(id, password, note) {
+    const data = {
+      ...note,
+      title: await encryptData(note.title, password),
+      content: await encryptData(note.content, password),
+    }
+
+    let req = new Request(`${apiBaseUrl}/notebook/${id}/notes`, {
       method: 'POST',
-      body: JSON.stringify(note),
-      headers: headers,
+      body: JSON.stringify(data),
+      headers: headers(password),
     })
-    return fetch(req).then((res) => {
-      if (res.status === 201) return res.json()
-      throw generateError(res)
-    })
+
+    const res = await fetch(req)
+    if (res.status === 201) return res.json()
+    throw generateError(res)
   },
-  updateNote(notebookId, passwordHash, note) {
-    let headers = new Headers()
-    headers.append('Authorization', 'Basic ' + passwordHash)
-    headers.append('Content-Type', 'application/json')
-    let req = new Request(
-      `${apiBaseUrl}/notebook/${notebookId}/notes/${note.id}`,
-      { method: 'PUT', body: JSON.stringify(note), headers: headers },
-    )
-    return fetch(req).then((res) => {
-      if (res.status === 200) return {}
-      throw generateError(res)
+  async updateNote(id, password, note) {
+    const data = {
+      ...note,
+      title: await encryptData(note.title, password),
+      content: await encryptData(note.content, password),
+    }
+
+    let req = new Request(`${apiBaseUrl}/notebook/${id}/notes/${note.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      headers: headers(password),
     })
+
+    const res = await fetch(req)
+    if (res.status === 200) return {}
+    throw generateError(res)
   },
-  deleteNote(notebookId, passwordHash, note) {
-    let headers = new Headers()
-    headers.append('Authorization', 'Basic ' + passwordHash)
-    headers.append('Content-Type', 'application/json')
-    let req = new Request(
-      `${apiBaseUrl}/notebook/${notebookId}/notes/${note.id}`,
-      { method: 'DELETE', body: null, headers: headers },
-    )
-    return fetch(req).then((res) => {
-      if (res.status === 200) return {}
-      throw generateError(res)
+  async deleteNote(id, password, note) {
+    let req = new Request(`${apiBaseUrl}/notebook/${id}/notes/${note.id}`, {
+      method: 'DELETE',
+      body: null,
+      headers: headers(password),
     })
+
+    const res = await fetch(req)
+    if (res.status === 200) return {}
+    throw generateError(res)
   },
 }
 

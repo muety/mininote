@@ -1,6 +1,8 @@
 'use strict'
 
 const config = require('../config'),
+    basicAuth = require('basic-auth'),
+    auth = require('../utils/auth'),
     lfsa = require('lokijs/src/loki-fs-structured-adapter'),
     loki = require('lokijs'),
     db = new loki(config.DB_FILE, {
@@ -37,7 +39,7 @@ exports.create = (req, res) => {
 
     let notebook = notebooks.insert({
         id: req.body.id,
-        password: req.body.password,
+        password: auth.hash(req.body.password),
         notes: []
     })
     
@@ -48,12 +50,11 @@ exports.create = (req, res) => {
 exports.update = (req, res) => {
     let notebook = notebooks.findOne({ id: req.params.id })
     if (!notebook) return res.status(404).end()
-    if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+    if (!auth.compare(basicAuth(req).pass, notebook.password)) return res.status(401).end()
 
     if (notebooks.findOne({ id: req.body.id })) return res.status(409).end()
 
     if (req.body.id) notebook.id = req.body.id
-    if (req.body.password) notebook.password = req.body.password
     notebooks.update(notebook)
 
     return res.status(200).end()
@@ -62,7 +63,7 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
     let notebook = notebooks.findOne({ id: req.params.id })
     if (!notebook) return res.status(404).end()
-    if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+    if (!auth.compare(basicAuth(req).pass, notebook.password)) return res.status(401).end()
 
     notebooks.remove(notebook)
 
@@ -72,7 +73,7 @@ exports.delete = (req, res) => {
 exports.getNotes = (req, res) => {
     let notebook = notebooks.findOne({ id: req.params.id })
     if (!notebook) return res.status(404).end()
-    if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+    if (!auth.compare(basicAuth(req).pass, notebook.password)) return res.status(401).end()
     
     return res.send(notebook.notes)
 }
@@ -80,7 +81,7 @@ exports.getNotes = (req, res) => {
 exports.addNote = (req, res) => {
     let notebook = notebooks.findOne({ id: req.params.id })
     if (!notebook) return res.status(404).end()
-    if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+    if (!auth.compare(basicAuth(req).pass, notebook.password)) return res.status(401).end()
 
     let newId = notebook.notes.reduce((acc, n) => Math.max(acc, n.id), 0) + 1
     notebook.notes.push({
@@ -96,7 +97,7 @@ exports.addNote = (req, res) => {
 exports.updateNote = (req, res) => {
     let notebook = notebooks.findOne({ id: req.params.id })
     if (!notebook) return res.status(404).end()
-    if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+    if (!auth.compare(basicAuth(req).pass, notebook.password)) return res.status(401).end()
 
     let note = notebook.notes.find(n => n.id == req.params.noteId)
     if (!note) return res.status(404).end()
@@ -111,7 +112,7 @@ exports.updateNote = (req, res) => {
 exports.deleteNote = (req, res) => {
     let notebook = notebooks.findOne({ id: req.params.id })
     if (!notebook) return res.status(404).end()
-    if (req.get('Authorization') !== `Basic ${notebook.password}`) return res.status(401).end()
+    if (!auth.compare(basicAuth(req).pass, notebook.password)) return res.status(401).end()
 
     let noteIdx = notebook.notes.findIndex(n => n.id == req.params.noteId)
     if (noteIdx < 0) return res.status(404).end()

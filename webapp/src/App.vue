@@ -31,7 +31,7 @@
       </div>
       <div
         v-if="loaded"
-        class="flex flex-col md:flex-row justify-between flex-grow mt-8 mb-4"
+        class="flex flex-col justify-between flex-grow mt-8 mb-4 md:flex-row"
       >
         <notes-picker
           @noteSelected="onNoteSelected"
@@ -166,7 +166,7 @@
         vm.alert = { text, variant }
         setTimeout(function () {
           vm.alert = null
-        }, 3000)
+        }, 1500)
       },
       onNoteUpdated: function ({ content, id }) {
         this.addChange({

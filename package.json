@@ -1,6 +1,6 @@
 {
     "name": "mininote",
-    "version": "0.7.6",
+    "version": "1.0.0",
     "description": "A simple Mardown note-taking editor",
     "main": "index.js",
     "scripts": {
@@ -19,6 +19,7 @@
     },
     "homepage": "https://github.com/muety/mininote#readme",
     "dependencies": {
+        "basic-auth": "^2.0.1",
         "body-parser": "^1.19.0",
         "cors": "^2.8.4",
         "express": "^4.17.1",

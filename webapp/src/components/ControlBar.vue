@@ -23,7 +23,7 @@
       <template #main>
         <div class="flex flex-col space-y-4">
           <div class="flex">
-            <div class="w-1/4">
+            <div class="flex items-center w-1/4">
               <label for="newNameInput">Name:</label>
             </div>
             <div class="w-3/4">
@@ -37,21 +37,6 @@
               />
             </div>
           </div>
-          <div class="flex">
-            <div class="w-1/4">
-              <label for="newPasswordInput">Password:</label>
-            </div>
-            <div class="w-3/4">
-              <input
-                id="newPasswordInput"
-                v-model="inputs.newPassword"
-                type="password"
-                placeholder="Enter new password for this notebook."
-                class="w-full bg-gray-100 focus:shadow-outline"
-                style="border: 1px solid #cbd5e0"
-              />
-            </div>
-          </div>
         </div>
       </template>
       <template #ok-btn>Save</template>
@@ -60,7 +45,7 @@
     <div class="flex justify-between">
       <!-- TODO: Move logo section out of here and pull it back in via a slot -->
       <div
-        class="w-1/4 text-2xl text-gray-400 flex-shrink-0 hidden md:inline"
+        class="flex-shrink-0 hidden w-1/4 text-2xl text-gray-400 md:inline"
         :class="{ hidden: state.loaded }"
       >
         <span>✎ Mini_Note</span>
@@ -68,7 +53,7 @@
       </div>
       <div
         id="notebook-chooser"
-        class="flex justify-center md:w-1/2 flex-shrink flex-grow"
+        class="flex justify-center flex-grow flex-shrink md:w-1/2"
         :class="{ 'w-full': !state.loaded }"
       >
         <button
@@ -83,11 +68,7 @@
           ref="refNotebookInput"
           v-model="inputs.name"
           type="text"
-          class="
-            placeholder-gray-700
-            rounded-l-none rounded-r-none
-            flex-grow flex-shrink
-          "
+          class="flex-grow flex-shrink placeholder-gray-700 rounded-l-none rounded-r-none"
           placeholder="Open or create notebook ..."
           :disabled="state.loaded"
           autofocus
@@ -98,11 +79,7 @@
           ref="refCreatePasswordInput"
           v-model="inputs.password"
           type="password"
-          class="
-            placeholder-gray-700
-            rounded-l-none rounded-r-none
-            flex-grow flex-shrink
-          "
+          class="flex-grow flex-shrink placeholder-gray-700 rounded-l-none rounded-r-none"
           placeholder="Choose a password for the new notebook..."
           @keyup.enter="_createNotebook"
         />
@@ -111,11 +88,7 @@
           ref="refOpenPasswordInput"
           v-model="inputs.password"
           type="password"
-          class="
-            placeholder-gray-700
-            rounded-l-none rounded-r-none
-            flex-grow flex-shrink
-          "
+          class="flex-grow flex-shrink placeholder-gray-700 rounded-l-none rounded-r-none"
           placeholder="Enter password ..."
           @keyup.enter="_openNotebook"
         />
@@ -148,7 +121,7 @@
         </button>
       </div>
       <div
-        class="hidden md:flex justify-end w-1/4 space-x-1"
+        class="justify-end hidden w-1/4 space-x-1 md:flex"
         :class="{ hidden: !state.loaded }"
       >
         <button
@@ -178,7 +151,6 @@
 </template>
 
 <script>
-  import { md5 } from '../lib/md5'
   import { toRefs } from 'vue'
 
   import { actions, getters, mutations } from '../store/types'
@@ -199,7 +171,6 @@
           name: '',
           password: '',
           newName: '',
-          newPassword: '',
         },
         state: {
           opening: false,
@@ -249,6 +220,7 @@
         return this.store.actions[actions.APPLY_CHANGES](...arguments)
       },
       handleError: function (err) {
+        console.error(err)
         this.$emit('alert', err.message)
         this.reset()
         this.close()
@@ -266,7 +238,6 @@
           name: '',
           password: '',
           newName: '',
-          newPassword: '',
         }
         this.state = {
           opening: false,
@@ -300,7 +271,7 @@
 
         this.loadNotebook({
           id: this.inputs.name.toLowerCase(),
-          password: md5(this.inputs.password),
+          password: this.inputs.password,
         })
           .then(() => {
             vm.state.opening = false
@@ -309,7 +280,6 @@
             this.selectFirst()
 
             this.inputs.newName = this.inputs.name
-            this.inputs.newPassword = this.inputs.password
           })
           .catch(vm.handleError)
       },
@@ -319,7 +289,7 @@
 
         this.createNotebook({
           id: this.inputs.name.toLowerCase(),
-          password: md5(this.inputs.password),
+          password: this.inputs.password,
         })
           .then(() => {
             vm.state.creating = false
@@ -341,11 +311,9 @@
 
         this.updateNotebook({
           id: this.inputs.newName.toLowerCase(),
-          password: md5(this.inputs.newPassword),
         })
           .then(() => {
-            ;(this.inputs.name = this.inputs.newName),
-              (this.inputs.password = this.inputs.newPassword)
+            this.inputs.name = this.inputs.newName
             this.$emit('alert', 'Notebook updated.', 'success')
             this.showSettingsModal = false
           })
