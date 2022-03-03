@@ -64,7 +64,8 @@ $ docker run \
     -v path/to/your/mininote.key:/etc/mininote.key:ro \
     -e HTTPS_CERT=/etc/mininote.crt \
     -e HTTPS_KEY=/etc/mininote.key \
-    --name mininote n1try/mininote
+    --name mininote \
+    ghcr.io/muety/mininote:latest
 ```
 
 ## 🔒 Encryption
