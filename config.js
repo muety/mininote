@@ -3,6 +3,6 @@ module.exports = {
     DB_FILE: process.env.TEST ? 'data/testdb.json' : 'data/notebooks.json',
     DB_COLLECTION_MAIN: 'notebooks',
     DEBUG: false,
-    HTTPS_KEY: null,
-    HTTPS_CERT: null,
+    HTTPS_KEY: process.env.HTTPS_KEY || null,
+    HTTPS_CERT: process.env.HTTPS_CERT || null,
 }

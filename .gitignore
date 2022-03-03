@@ -4,3 +4,6 @@ dist
 node_modules
 data/*.json*
 data/*.pem
+*.crt
+*.key
+*.pem

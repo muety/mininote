@@ -18,36 +18,53 @@ With the release of version `1.0.0`, **encryption** was introduced. However, due
 Currently, no automated migration is provided, sorry. To migrate to `1.0.0`, you will need to run two parallel instances and manually copy your notes.
 
 ## ⚙️ Requirements
-* NodeJS >= `12.19.0 LTS`
+* NodeJS >= `16.14.0 LTS`
 
 ## ⌨️ How to run?
+**💡 Since version 1.0.0, TLS encryption is mandatory for hosts other than `localhost`, as required for `window.crypto.subtle` (see [#73](https://github.com/muety/mininote/issues/73#issuecomment-1057782171)).**
+
+When either only using MiniNote locally or running it behind a reverse proxy, which terminates TLS instead, you can leave out the HTTPS / TLS part of the setup. 
+
 ```bash
-# Clone the repo
+# 1. Clone the repo
 $ git clone https://github.com/muety/mininote
 
-# Install backend dependencies
+# 2. Install backend dependencies
 $ yarn
 
-# Install frontend dependencies and build
+# 3. Install frontend dependencies and build
 $ cd webapp && yarn && yarn build && cd ..
+
+# 4. Obtain or create a TLS certifiate
+# See https://www.linode.com/docs/guides/create-a-self-signed-tls-certificate/
+# Skip for localhost or with reverse proxy
+
+# 4. Set environment variables for TLS cert and key
+# Skip for localhost or with reverse proxy
+$ export HTTPS_CERT='path/to/your/mininote.crt'
+$ export HTTPS_KEY='path/to/your/mininote.key'
 
 # Run
 $ yarn start
 ```
 
-### Use HTTPS for backend
-1. Open `config.js`
-2. Edit the `HTTPS_KEY` and `HTTPS_CERT` field, and insert the file locations at which your private key and site certifications are stored.
-3. Launch the backend server
--> To switch back to the HTTP server, nullify either field and relaunch again.
-
 ## 🐳 How to run with Docker?
 ```bash
-# Create a persistent volume
+# 1. Obtain or create TLS certificate (see above)
+
+# 2. Create a persistent volume
 $ docker volume create mininote-data
 
-# Run the container
-$ docker run -d -p 3000:3000 -v mininote-data:/app/data --name mininote n1try/mininote
+# 3. Run the container
+$ docker run \
+    -d \
+    -p 3000:3000 \
+    -v mininote-data:/app/data \
+    -v path/to/your/mininote.crt:/etc/mininote.crt:ro \
+    -v path/to/your/mininote.key:/etc/mininote.key:ro \
+    -e HTTPS_CERT=/etc/mininote.crt \
+    -e HTTPS_KEY=/etc/mininote.key \
+    --name mininote n1try/mininote
 ```
 
 ## 🔒 Encryption
