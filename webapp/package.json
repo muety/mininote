@@ -1,6 +1,6 @@
 {
   "name": "mininote-frontend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "A simple Mardown note-taking editor.",
   "author": "Ferdinand Mütsch <mail@ferdinand-muetsch.de>",
