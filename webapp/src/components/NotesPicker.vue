@@ -30,14 +30,7 @@
 
     <div class="flex mb-8">
       <span
-        class="
-          flex
-          items-center
-          px-4
-          bg-gray-300
-          border-r border-gray-400
-          rounded-l-md
-        "
+        class="flex items-center px-4 bg-gray-300 border-r border-gray-400 rounded-l-md"
         >&#x1F50D;</span
       >
       <input
@@ -52,17 +45,7 @@
       <li
         v-for="n in filteredNotes"
         :key="n.id"
-        class="
-          flex
-          items-center
-          justify-between
-          px-4
-          py-2
-          bg-gray-100
-          cursor-pointer
-          first:rounded-t-md
-          last:rounded-b-md
-        "
+        class="flex items-center justify-between px-4 py-2 bg-gray-100 cursor-pointer first:rounded-t-md last:rounded-b-md"
         :class="{ 'note-active': selectedNoteId == n.id }"
         @click="selectNote(n.id)"
       >
