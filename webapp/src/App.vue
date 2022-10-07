@@ -25,6 +25,7 @@
             <notebooks-picker
               :notebooks="notebooks"
               @notebook-selected="onNotebookSelected"
+              @alert="showAlert"
             ></notebooks-picker>
           </div>
         </div>

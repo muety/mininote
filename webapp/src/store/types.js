@@ -16,6 +16,7 @@ const actions = {
   LIST_NOTEBOOKS: 'listNotebooks',
   CREATE_NOTEBOOK: 'createNotebook',
   UPDATE_NOTEBOOK: 'updateNotebook',
+  DELETE_NOTEBOOK: 'deleteNotebook',
   UPDATE_NOTE: 'updateNote',
   APPLY_CHANGES: 'applyChanges',
 }

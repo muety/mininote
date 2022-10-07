@@ -215,6 +215,10 @@ export const createStore = () => {
       )
       mutations.setNotebook(notebook)
     },
+    async deleteNotebook(id) {
+      await api.delete(id)
+      mutations.setNotebooks(await api.list())
+    },
     async createNote(note) {
       const data = await api.addNote(
         state.notebook.id,

@@ -60,6 +60,16 @@ const api = {
     if (res.status === 200) return {}
     throw generateError(res)
   },
+  async delete({ id, password }) {
+    let req = new Request(`${apiBaseUrl}/notebook/${id}`, {
+      method: 'DELETE',
+      headers: headers(password),
+    })
+
+    const res = await fetch(req)
+    if (res.status === 200) return {}
+    throw generateError(res)
+  },
   async getNotes(id, password) {
     let req = new Request(`${apiBaseUrl}/notebook/${id}/notes`, {
       method: 'GET',

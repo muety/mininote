@@ -7,27 +7,51 @@
       @click="chooseNotebook(n.id)"
     >
       {{ n.id }}
-      <div
-        class="flex items-center px-3 py-0 text-xs font-semibold text-gray-100 bg-green-600 rounded-l-xl rounded-r-xl"
-      >
-        {{ n.count }}
+      <div class="flex">
+        <div
+          class="flex items-center px-3 py-0 text-xs font-semibold text-gray-100 bg-green-600 rounded-l-xl rounded-r-xl"
+        >
+          {{ n.count }}
+        </div>
+        <span class="ml-1 delete-btn" @click.stop="deleteNotebook(n.id)"
+          >🗑</span
+        >
       </div>
     </button>
   </div>
 </template>
 
 <script>
+  import { STORE_KEY } from '../store'
+  import { actions } from '../store/types'
+
   export default {
+    inject: [STORE_KEY],
     props: {
       notebooks: {
         type: Array,
         required: true,
       },
     },
-    emits: ['notebook-selected'],
+    emits: ['notebook-selected', 'alert'],
     methods: {
       chooseNotebook: function (id) {
         this.$emit('notebook-selected', id)
+      },
+      deleteNotebook: function (id) {
+        let password = prompt('Password')
+        let vm = this
+        this.store.actions[actions.DELETE_NOTEBOOK]({ id, password })
+          .then(() => {
+            vm.state.loaded = true
+          })
+          .catch(vm.handleError)
+      },
+      handleError: function (err) {
+        console.error(err)
+        this.$emit('alert', err.message)
+        this.reset()
+        this.close()
       },
     },
   }
