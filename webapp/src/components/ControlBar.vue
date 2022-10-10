@@ -53,12 +53,12 @@
       </div>
       <div
         id="notebook-chooser"
-        class="flex justify-center flex-grow flex-shrink"
+        class="flex justify-center flex-grow flex-shrink relative"
       >
         <button
           type="button"
           class="px-4 rounded-r-none btn-danger hover:bg-red-800"
-          @click="dirty ? tryReset(true) : close()"
+          @click.stop="dirty ? tryReset(true) : close()"
         >
           &#x2573;
         </button>
@@ -92,6 +92,9 @@
           placeholder="Enter password ..."
           @keyup.enter="_openNotebook"
         />
+        <button v-if="inputs.name" class="ml-1 delete-btn absolute" style="right: 60px;" @click.stop="deleteNotebook()">
+          🗑
+        </button>
         <button
           v-if="!state.opening && !state.creating && !state.loaded"
           type="button"
@@ -220,6 +223,17 @@
       },
       [actions.APPLY_CHANGES]() {
         return this.store.actions[actions.APPLY_CHANGES](...arguments)
+      },
+      deleteNotebook: function () {
+        let id = this.inputs.name.toLowerCase();
+        let password = prompt('Password')
+        let vm = this
+        this.store.actions[actions.DELETE_NOTEBOOK]({ id, password })
+          .then(() => {
+            vm.reset()
+            vm.close();
+          })
+          .catch(vm.handleError)
       },
       handleError: function (err) {
         console.error(err)

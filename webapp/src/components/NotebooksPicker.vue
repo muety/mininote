@@ -13,20 +13,13 @@
         >
           {{ n.count }}
         </div>
-        <span class="ml-1 delete-btn" @click.stop="deleteNotebook(n.id)"
-          >🗑</span
-        >
       </div>
     </button>
   </div>
 </template>
 
 <script>
-  import { STORE_KEY } from '../store'
-  import { actions } from '../store/types'
-
   export default {
-    inject: [STORE_KEY],
     props: {
       notebooks: {
         type: Array,
@@ -37,21 +30,6 @@
     methods: {
       chooseNotebook: function (id) {
         this.$emit('notebook-selected', id)
-      },
-      deleteNotebook: function (id) {
-        let password = prompt('Password')
-        let vm = this
-        this.store.actions[actions.DELETE_NOTEBOOK]({ id, password })
-          .then(() => {
-            vm.state.loaded = true
-          })
-          .catch(vm.handleError)
-      },
-      handleError: function (err) {
-        console.error(err)
-        this.$emit('alert', err.message)
-        this.reset()
-        this.close()
       },
     },
   }
