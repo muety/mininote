@@ -227,6 +227,7 @@
       deleteNotebook: function () {
         let id = this.inputs.name.toLowerCase();
         let password = prompt('Password')
+        if (!password) return;
         let vm = this
         this.store.actions[actions.DELETE_NOTEBOOK]({ id, password })
           .then(() => {
