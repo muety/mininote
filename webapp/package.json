@@ -38,6 +38,9 @@
     "vite": "^2.0.5",
     "vue-jest": "^5.0.0-0"
   },
+  "resolutions": {
+    "@achrinza/node-ipc": "^10.1.7"
+  },
   "eslintConfig": {
     "root": true,
     "env": {
@@ -78,7 +81,7 @@
     "not ie <= 8"
   ],
   "engines": {
-    "node": ">= 12.0.0",
+    "node": ">= 16.14.0",
     "yarn": ">= 1.0.0"
   },
   "license": "MIT"
