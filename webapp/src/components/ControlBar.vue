@@ -92,7 +92,12 @@
           placeholder="Enter password ..."
           @keyup.enter="_openNotebook"
         />
-        <button v-if="inputs.name" class="ml-1 delete-btn absolute" style="right: 60px;" @click.stop="deleteNotebook()">
+        <button
+          v-if="inputs.name"
+          class="ml-1 delete-btn absolute"
+          style="right: 60px"
+          @click.stop="deleteNotebook()"
+        >
           🗑
         </button>
         <button
@@ -225,14 +230,14 @@
         return this.store.actions[actions.APPLY_CHANGES](...arguments)
       },
       deleteNotebook: function () {
-        let id = this.inputs.name.toLowerCase();
+        let id = this.inputs.name.toLowerCase()
         let password = prompt('Password')
-        if (!password) return;
+        if (!password) return
         let vm = this
         this.store.actions[actions.DELETE_NOTEBOOK]({ id, password })
           .then(() => {
             vm.reset()
-            vm.close();
+            vm.close()
           })
           .catch(vm.handleError)
       },

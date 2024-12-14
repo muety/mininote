@@ -12,13 +12,8 @@ A simple, self-hosted, encrypted Markdown note-taking app built with [Vue 3](htt
 ![](https://i.imgur.com/Y9TFu6w.png)
 
 
-## ⚠️ Breaking Changes
-With the release of version `1.0.0`, **encryption** was introduced. However, due to this non-trivial change, this release is not backwards-compatible with previous versions. Attempting to run version `1.0.0` with a database created with an earlier version will cause the application to crash. 
-
-Currently, no automated migration is provided, sorry. To migrate to `1.0.0`, you will need to run two parallel instances and manually copy your notes.
-
 ## ⚙️ Requirements
-* NodeJS >= `16.14.0 LTS`
+* NodeJS >= `22.12.0 LTS`
 
 ## ⌨️ How to run?
 **💡 Since version 1.0.0, TLS encryption is mandatory for hosts other than `localhost`, as required for `window.crypto.subtle` (see [#73](https://github.com/muety/mininote/issues/73#issuecomment-1057782171)).**

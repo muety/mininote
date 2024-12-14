@@ -37,7 +37,7 @@
 </template>
 
 <script>
-  import marked from 'marked'
+  import { marked } from 'marked'
   import createDOMPurify from 'dompurify'
 
   const DOMPurify = createDOMPurify(window)
