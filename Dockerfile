@@ -11,9 +11,14 @@ COPY . /app/
 
 VOLUME ["/app/data"]
 
-RUN cd /app && yarn
+RUN cd /app && \
+    corepack enable && \
+    yarn set version stable && \
+    yarn
 
 RUN cd /app/webapp && \
+    corepack enable && \
+    yarn set version stable && \
     yarn && \
     yarn build:base && \
     cd ..
